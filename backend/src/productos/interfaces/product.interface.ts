@@ -1,6 +1,5 @@
 export interface ProductInterface {
     id: number;
-    categoria: string;
     nombre: string;
     subtitulo: string;
     descuento: number | null;
