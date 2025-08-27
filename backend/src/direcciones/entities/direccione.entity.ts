@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ResidenceInterface } from "../interfaces/residence.interface";
+import { Usuario } from "src/usuarios/entities/usuario.entity";
 
 @Entity({ name: 'direcciones' })
 export class Direccione implements ResidenceInterface{
@@ -15,6 +16,10 @@ export class Direccione implements ResidenceInterface{
     @Column({ type: 'varchar', length: 255, nullable: false})
     direccion: string;
 
-    @Column({ type: 'numeric', length: 10, nullable: false})
+    @Column({ type: 'numeric', nullable: false})
     celular: number;
+
+    @ManyToOne(() => Usuario, (usuario) => usuario.direcciones, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'usuario_id' })
+    usuario: Usuario;
 }

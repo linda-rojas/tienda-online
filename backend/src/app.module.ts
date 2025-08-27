@@ -8,6 +8,7 @@ import { ProductosModule } from './productos/productos.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { DireccionesModule } from './direcciones/direcciones.module';
 import { CategoriasModule } from './categorias/categorias.module';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { CategoriasModule } from './categorias/categorias.module';
     ProductosModule,
     UsuariosModule,
     DireccionesModule,
-    CategoriasModule
+    CategoriasModule,
+    RolesModule
   ],
   controllers: [AppController],
   providers: [AppService],

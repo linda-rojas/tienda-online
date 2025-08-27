@@ -1,18 +1,20 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UserInterface } from "../interfaces/user.interface";
+import { Direccione } from "src/direcciones/entities/direccione.entity";
+import { Role } from "src/roles/entities/role.entity";
 
 @Entity({ name: 'usuarios' })
 export class Usuario implements UserInterface {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 30, nullable: false})
+  @Column({ type: 'varchar', length: 30 })
   nombre: string;
 
   @Column({ type: 'varchar', length: 50, scale: 0, nullable: false })
   apellidos: string;
 
-  @Column({ type: 'numeric', length: 10, nullable: false })
+  @Column({ type: 'numeric', nullable: false })
   celular: number;
 
   @Column({ type: 'varchar', length: 100, unique: true, nullable: false })
@@ -21,6 +23,10 @@ export class Usuario implements UserInterface {
   @Column({ type: 'text', nullable: false })
   contraseña: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  direcciones: string;
+  @OneToMany(() => Direccione, (direccion) => direccion.usuario, { cascade: true })
+  direcciones: Direccione[];
+
+  @ManyToOne(() => Role, (role) => role.usuarios, { cascade: true })
+  role: Role;
+
 }

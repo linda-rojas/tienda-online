@@ -3,6 +3,7 @@ import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { IdValidationPipe } from 'src/common/pipes/id-validation/id-validation.pipe';
+import { PhoneValidationPipe } from 'src/common/pipes/phone-validation/phone-validation.pipe';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -32,5 +33,10 @@ export class UsuariosController {
   @Delete(':id')
   remove(@Param('id', IdValidationPipe) id: string) {
     return this.usuariosService.remove(+id);
+  }
+
+  @Get('validation-phone/:celular')
+  validationPhone(@Param('celular', PhoneValidationPipe) celular: string) {
+    return `Número válido: ${celular}`;
   }
 }

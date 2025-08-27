@@ -6,5 +6,4 @@ export interface UserInterface {
     celular: number;
     correo: string;
     contraseña: string;
-    direcciones: string
 }

@@ -5,12 +5,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from './entities/usuario.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Role } from 'src/roles/entities/role.entity';
 
 @Injectable()
 export class UsuariosService {
   constructor(
-      @InjectRepository(Usuario) private readonly usuarioRepository : Repository<Usuario>
+      @InjectRepository(Usuario) private readonly usuarioRepository : Repository<Usuario>,
+      @InjectRepository(Role) private readonly RoleRepository : Repository<Role>,
+      
     ) {}
+
 
   async create(createUsuarioDto: CreateUsuarioDto) {
     const hashedPassword = await bcrypt.hash(createUsuarioDto.contraseña, 10);

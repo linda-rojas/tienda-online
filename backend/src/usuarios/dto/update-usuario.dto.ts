@@ -10,5 +10,4 @@ export class UpdateUsuarioDto extends PartialType(CreateUsuarioDto) {
     @IsNotEmpty({message: "El correo del usuario no Puede ir vacio"})
     correo: string;
     contraseña: string;
-    direcciones: string
 }

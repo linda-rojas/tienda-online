@@ -3,6 +3,7 @@ import { DireccionesService } from './direcciones.service';
 import { CreateDireccioneDto } from './dto/create-direccione.dto';
 import { UpdateDireccioneDto } from './dto/update-direccione.dto';
 import { IdValidationPipe } from 'src/common/pipes/id-validation/id-validation.pipe';
+import { PhoneValidationPipe } from 'src/common/pipes/phone-validation/phone-validation.pipe';
 
 @Controller('direcciones')
 export class DireccionesController {
@@ -32,5 +33,10 @@ export class DireccionesController {
   @Delete(':id')
   remove(@Param('id', IdValidationPipe) id: string) {
     return this.direccionesService.remove(+id);
+  }
+
+  @Get('validation-phone/:celular')
+  validationPhone(@Param('celular', PhoneValidationPipe) celular: string) {
+    return `Número válido: ${celular}`;
   }
 }
