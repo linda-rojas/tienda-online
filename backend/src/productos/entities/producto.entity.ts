@@ -7,16 +7,16 @@ export class Producto implements ProductInterface {
     @PrimaryGeneratedColumn()
     id: number
     
-    @Column({ type: 'varchar', length: 50 })
+    @Column({ type: 'varchar', length: 50, nullable: false })
     nombre: string
 
-    @Column({ type: 'varchar', length: 150 })
+    @Column({ type: 'varchar', length: 150, nullable: true })
     subtitulo: string
 
     @Column({ type: 'numeric', nullable: true })
     descuento: number;
 
-    @Column({ type: 'text', nullable: true })
+    @Column({ type: 'text', nullable: false })
     descripcion: string
 
     @Column({ type: 'text', nullable: true })
@@ -25,10 +25,10 @@ export class Producto implements ProductInterface {
     @Column({ type: 'text', nullable: true })
     imagen_url2: string
 
-    @Column({ type: 'numeric' })
+    @Column({ type: 'numeric', nullable: false })
     stock: number
 
-    @Column({ type: 'numeric' })
+    @Column({ type: 'numeric', nullable: false })
     precio: number;
 
     @ManyToOne(() => Categoria)

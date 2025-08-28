@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { IdValidationPipe } from 'src/common/pipes/id-validation/id-validation.pipe';
+import { GetProductsQueryDto } from './dto/get-product.dto';
 
 @Controller('productos')
 export class ProductosController {
@@ -16,9 +17,13 @@ export class ProductosController {
 
   
   @Get()
-  findAll() {
-    return this.productosService.findAll();
-  }
+findAll(@Query() query: GetProductsQueryDto) {
+  const categoria = query.categoria_id ? query.categoria_id : null
+  const take = query.take ? query.take : 8
+  const skip = query.skip ? query.skip : 0
+
+  return this.productosService.findAll(categoria, take, skip);
+}
 
   @Get(':id')
   findOne(@Param('id', IdValidationPipe) id: string) {

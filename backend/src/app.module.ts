@@ -9,6 +9,7 @@ import { UsuariosModule } from './usuarios/usuarios.module';
 import { DireccionesModule } from './direcciones/direcciones.module';
 import { CategoriasModule } from './categorias/categorias.module';
 import { RolesModule } from './roles/roles.module';
+import { TransaccionsModule } from './transaccions/transaccions.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { RolesModule } from './roles/roles.module';
     UsuariosModule,
     DireccionesModule,
     CategoriasModule,
-    RolesModule
+    RolesModule,
+    TransaccionsModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -8,7 +8,7 @@ export class Usuario implements UserInterface {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 30 })
+  @Column({ type: 'varchar', length: 30, nullable: false })
   nombre: string;
 
   @Column({ type: 'varchar', length: 50, scale: 0, nullable: false })
