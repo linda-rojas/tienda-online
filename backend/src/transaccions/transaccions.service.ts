@@ -6,13 +6,15 @@ import { Transaccion, TransaccionContenidos } from './entities/transaccion.entit
 import { Between, FindManyOptions, Repository } from 'typeorm';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { endOfDay, isValid, parseISO, startOfDay } from 'date-fns';
+import { CuponesService } from 'src/cupones/cupones.service';
 
 @Injectable()
 export class TransaccionsService {
   constructor(
     @InjectRepository(Transaccion) private readonly transaccionesRepository : Repository<Transaccion>,
     @InjectRepository(TransaccionContenidos) private readonly transaccionesContenidosRepository : Repository<TransaccionContenidos>,
-    @InjectRepository(Producto) private readonly productosRepository : Repository<Producto>
+    @InjectRepository(Producto) private readonly productosRepository : Repository<Producto>,
+    private readonly couponService : CuponesService
     ) {}
 
 
@@ -23,11 +25,19 @@ export class TransaccionsService {
     const total = createTransaccionDto.contents.reduce((total, item) => total + (item.cantidad * item.precio), 0)
       transaccion.total = total
 
-      for (const contents of createTransaccionDto.contents) {
+        if (createTransaccionDto.cupon) {
+          const coupon = await this.couponService.applyCupon(createTransaccionDto.cupon)
+          const discount = (coupon.porcentaje / 100) * total
+          transaccion.descuento = discount
+          transaccion.cupon = coupon.nombre
+          transaccion.total -= discount
+        }
 
+      for (const contents of createTransaccionDto.contents) {
         const errors: string[] = [];
         
         const producto = await transactionEntityManager.findOneBy( Producto, {id: contents.productoId})
+
         if (!producto) {
           errors.push(`Producto con id: ${contents.productoId} no fue encontrado`)
           throw new NotFoundException(errors);

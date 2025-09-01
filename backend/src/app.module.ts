@@ -10,6 +10,7 @@ import { DireccionesModule } from './direcciones/direcciones.module';
 import { CategoriasModule } from './categorias/categorias.module';
 import { RolesModule } from './roles/roles.module';
 import { TransaccionsModule } from './transaccions/transaccions.module';
+import { CuponesModule } from './cupones/cupones.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { TransaccionsModule } from './transaccions/transaccions.module';
     DireccionesModule,
     CategoriasModule,
     RolesModule,
-    TransaccionsModule
+    TransaccionsModule,
+    CuponesModule
   ],
   controllers: [AppController],
   providers: [AppService],

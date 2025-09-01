@@ -1,4 +1,5 @@
 import { Categoria } from "src/categorias/entities/categoria.entity";
+import { Cupone } from "src/cupones/entities/cupone.entity";
 import { Direccione } from "src/direcciones/entities/direccione.entity";
 import { Producto } from "src/productos/entities/producto.entity";
 import { Role } from "src/roles/entities/role.entity";
@@ -9,5 +10,6 @@ export const entities = [
     Categoria,
     Usuario,
     Direccione,
-    Role
+    Role,
+    Cupone
 ]

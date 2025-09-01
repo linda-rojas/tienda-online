@@ -10,6 +10,12 @@ export class Transaccion implements TransactionInterface{
         
     @Column({ type: 'decimal' })
     total: number
+
+    @Column({ type: 'varchar', length: 30, nullable: true })
+    cupon: string
+
+    @Column({ type: 'decimal', nullable: true, default: 0 })
+    descuento: number
     
     @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
     transaccionDate: Date
