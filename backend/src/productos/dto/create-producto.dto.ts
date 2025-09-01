@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, isNumber, IsString } from "class-validator";
 import { ProductInterface } from "../interfaces/product.interface";
-import { Categoria } from "src/categorias/entities/categoria.entity";
+import { Categoria } from "../../categorias/entities/categoria.entity";
 
 export class CreateProductoDto implements ProductInterface {
     id: number;

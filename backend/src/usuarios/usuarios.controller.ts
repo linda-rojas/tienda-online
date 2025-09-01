@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { IdValidationPipe } from 'src/common/pipes/id-validation/id-validation.pipe';
-import { PhoneValidationPipe } from 'src/common/pipes/phone-validation/phone-validation.pipe';
+import { IdValidationPipe } from '../common/pipes/id-validation/id-validation.pipe';
+import { PhoneValidationPipe } from '../common/pipes/phone-validation/phone-validation.pipe';
 
 @Controller('usuarios')
 export class UsuariosController {

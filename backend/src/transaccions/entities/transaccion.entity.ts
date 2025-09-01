@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TransactionInterface } from "../interfaces/transaction.interface";
 import { TransactionContentsInterface } from "../interfaces/TransactionContentsInterface.interface";
-import { Producto } from "src/productos/entities/producto.entity";
+import { Producto } from "../../productos/entities/producto.entity";
 
 @Entity({ name: 'transacciones' })
 export class Transaccion implements TransactionInterface{

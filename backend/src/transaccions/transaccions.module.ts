@@ -3,8 +3,8 @@ import { TransaccionsService } from './transaccions.service';
 import { TransaccionsController } from './transaccions.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Transaccion, TransaccionContenidos } from './entities/transaccion.entity';
-import { Producto } from 'src/productos/entities/producto.entity';
-import { CuponesModule } from 'src/cupones/cupones.module';
+import { Producto } from '../productos/entities/producto.entity';
+import { CuponesModule } from '../cupones/cupones.module';
 
 @Module({
   imports: [

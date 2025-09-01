@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CategoriesInterface } from "../interfaces/categories.interface";
-import { Producto } from "src/productos/entities/producto.entity";
+import { Producto } from "../../productos/entities/producto.entity";
 
 @Entity({ name: 'categorias' })
 export class Categoria implements CategoriesInterface{

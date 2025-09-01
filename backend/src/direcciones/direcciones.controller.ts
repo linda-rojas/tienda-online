@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { DireccionesService } from './direcciones.service';
 import { CreateDireccioneDto } from './dto/create-direccione.dto';
 import { UpdateDireccioneDto } from './dto/update-direccione.dto';
-import { IdValidationPipe } from 'src/common/pipes/id-validation/id-validation.pipe';
-import { PhoneValidationPipe } from 'src/common/pipes/phone-validation/phone-validation.pipe';
+import { IdValidationPipe } from '../common/pipes/id-validation/id-validation.pipe';
+import { PhoneValidationPipe } from '../common/pipes/phone-validation/phone-validation.pipe';
 
 @Controller('direcciones')
 export class DireccionesController {

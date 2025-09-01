@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UserInterface } from "../interfaces/user.interface";
-import { Direccione } from "src/direcciones/entities/direccione.entity";
-import { Role } from "src/roles/entities/role.entity";
+import { Direccione } from "../../direcciones/entities/direccione.entity";
+import { Role } from "../../roles/entities/role.entity";
 
 @Entity({ name: 'usuarios' })
 export class Usuario implements UserInterface {

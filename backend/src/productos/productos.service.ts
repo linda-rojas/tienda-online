@@ -4,7 +4,7 @@ import { UpdateProductoDto } from './dto/update-producto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from './entities/producto.entity';
 import { FindManyOptions, Repository } from 'typeorm';
-import { Categoria } from 'src/categorias/entities/categoria.entity';
+import { Categoria } from '../categorias/entities/categoria.entity';
 
 @Injectable()
 export class ProductosService {

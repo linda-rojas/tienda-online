@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ResidenceInterface } from "../interfaces/residence.interface";
-import { Usuario } from "src/usuarios/entities/usuario.entity";
+import { Usuario } from "../../usuarios/entities/usuario.entity";
 
 @Entity({ name: 'direcciones' })
 export class Direccione implements ResidenceInterface{
