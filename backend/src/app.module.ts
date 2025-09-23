@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from '@nestjs/common';
+
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
 import { typeOrmConfig } from './config/typeorm.config';
 import { ProductosModule } from './productos/productos.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
@@ -27,9 +28,9 @@ import { CuponesModule } from './cupones/cupones.module';
     CategoriasModule,
     RolesModule,
     TransaccionsModule,
-    CuponesModule
+    CuponesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

@@ -7,7 +7,7 @@ import { PhoneValidationPipe } from '../common/pipes/phone-validation/phone-vali
 
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
 
   @Post()
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
@@ -40,3 +40,4 @@ export class UsuariosController {
     return `Número válido: ${celular}`;
   }
 }
+

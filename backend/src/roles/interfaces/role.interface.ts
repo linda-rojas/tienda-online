@@ -1,5 +1,5 @@
 
 export interface RoleInterface {
-    id: number;
+    id?: number;
     nombre: string;
 }

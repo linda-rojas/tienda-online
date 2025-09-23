@@ -2,19 +2,19 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { CouponsInterface } from "../interfaces/coupons.interface";
 
 @Entity({ name: 'cupones' })
-export class Cupone implements CouponsInterface{
+export class Cupone implements CouponsInterface {
     static expirationDate(expirationDate: any) {
-    throw new Error('Method not implemented.');
+        throw new Error('Method not implemented.');
     }
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'varchar', length: 30})
+    @Column({ type: 'varchar', length: 30, unique: true })
     nombre: string;
 
-    @Column({ type: 'integer'})
+    @Column({ type: 'integer' })
     porcentaje: number;
 
-    @Column({ type: 'date'})
+    @Column({ type: 'date' })
     expiracionFecha: Date;
 }

@@ -3,5 +3,5 @@ export interface ResidenceInterface {
     departamento: string;
     ciudad: string;
     direccion: string;
-    celular: number;
+    celular: string;
 }

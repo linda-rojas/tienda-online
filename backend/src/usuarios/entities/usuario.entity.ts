@@ -15,10 +15,10 @@ export class Usuario implements UserInterface {
   apellidos: string;
 
   @Column({ type: 'numeric', nullable: false })
-  celular: number;
+  celular: string;
 
   @Column({ type: 'varchar', length: 100, unique: true, nullable: false })
-  correo: string; 
+  correo: string;
 
   @Column({ type: 'text', nullable: false })
   contraseña: string;
@@ -28,5 +28,4 @@ export class Usuario implements UserInterface {
 
   @ManyToOne(() => Role, (role) => role.usuarios, { cascade: true })
   role: Role;
-
 }

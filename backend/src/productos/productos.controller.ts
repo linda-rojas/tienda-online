@@ -11,32 +11,31 @@ export class ProductosController {
 
   @Post()
   create(@Body() createProductoDto: CreateProductoDto) {
-    console.log(process.env.DATABASE_USER || 3000)
     return this.productosService.create(createProductoDto);
   }
 
   
   @Get()
-findAll(@Query() query: GetProductsQueryDto) {
-  const categoria = query.categoria_id ? query.categoria_id : null
-  const take = query.take ? query.take : 8
-  const skip = query.skip ? query.skip : 0
+  findAll(@Query() query: GetProductsQueryDto) {
+    const categoria = query.categoria_id ? query.categoria_id : null
+    const take = query.take ? query.take : 8
+    const skip = query.skip ? query.skip : 0
 
-  return this.productosService.findAll(categoria, take, skip);
-}
+    return this.productosService.findAll(categoria, take, skip);
+  }
 
   @Get(':id')
-  findOne(@Param('id', IdValidationPipe) id: string) {
-    return this.productosService.findOne(+id);
+  findOne(@Param('id', IdValidationPipe) id: number) {
+    return this.productosService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id', IdValidationPipe) id: string, @Body() updateProductoDto: UpdateProductoDto) {
-    return this.productosService.update(+id, updateProductoDto);
+  update(@Param('id', IdValidationPipe) id: number, @Body() updateProductoDto: UpdateProductoDto) {
+    return this.productosService.update(id, updateProductoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', IdValidationPipe) id: string) {
-    return this.productosService.remove(+id);
+  remove(@Param('id', IdValidationPipe) id: number) {
+    return this.productosService.remove(id);
   }
 }

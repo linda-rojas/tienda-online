@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, ValidationPipe, Put, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, ValidationPipe, HttpCode, HttpStatus, Patch } from '@nestjs/common';
 import { CuponesService } from './cupones.service';
 import { CreateCuponeDto } from './dto/create-cupone.dto';
 import { UpdateCuponeDto } from './dto/update-cupone.dto';
@@ -6,7 +6,7 @@ import { ApplyCouponDto } from './dto/apply-coupon.dto';
 
 @Controller('cupones')
 export class CuponesController {
-  constructor(private readonly cuponesService: CuponesService) {}
+  constructor(private readonly cuponesService: CuponesService) { }
 
   @Post()
   create(@Body() createCuponeDto: CreateCuponeDto) {
@@ -23,10 +23,10 @@ export class CuponesController {
     return this.cuponesService.findOne(+id);
   }
 
-  @Put(':id')
-    update(@Param('id', ValidationPipe) id: string, 
+  @Patch(':id')
+  update(@Param('id', ValidationPipe) id: string,
     @Body() updateCuponeDto: UpdateCuponeDto
-    ) {
+  ) {
     return this.cuponesService.update(+id, updateCuponeDto);
   }
 
@@ -37,7 +37,7 @@ export class CuponesController {
 
   @Post('/aplicar-cupon')
   @HttpCode(HttpStatus.OK)
-  applyCoupon(@Body() applyCouponDto : ApplyCouponDto) {
+  applyCoupon(@Body() applyCouponDto: ApplyCouponDto) {
     return this.cuponesService.applyCupon(applyCouponDto.cupon_nombre);
   }
 }

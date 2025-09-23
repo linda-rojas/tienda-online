@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import {  ArrayNotEmpty, IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, Length, ValidateNested } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, Length, MaxLength, ValidateNested } from "class-validator";
 
 export class TransactionContentsDto {
   @IsNotEmpty({ message: 'El ID del producto no puede estar vacío' })
@@ -16,15 +16,16 @@ export class TransactionContentsDto {
 }
 
 export class CreateTransaccionDto {
-  @IsNotEmpty({message: 'El Total no puede ir vacio'})
-  @IsNumber({}, {message: 'Cantidad no válida'})
+  @IsNotEmpty({ message: 'El Total no puede ir vacio' })
+  @IsNumber({}, { message: 'Cantidad no válida' })
   total: number
 
+  @MaxLength(30, { message: 'El campo cupon no puede tener mas de 30 caracteres' })
   @IsOptional()
   cupon: string
 
   @IsArray()
-  @ArrayNotEmpty({message: 'Los Contenidos no pueden ir vacios'})
+  @ArrayNotEmpty({ message: 'Los Contenidos no pueden ir vacios' })
   @ValidateNested()
   @Type(() => TransactionContentsDto)
   contents: TransactionContentsDto[]

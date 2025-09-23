@@ -7,7 +7,7 @@ export class Categoria implements CategoriesInterface{
     @PrimaryGeneratedColumn()
     id: number;
     
-    @Column({ type: 'varchar', length: 50, nullable: false})
+    @Column({ type: 'varchar', length: 50, nullable: false, unique: true })
     nombre: string;
 
     @OneToMany(() => Producto, (producto) => producto.categoria, {cascade: true})

@@ -1,16 +1,46 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateProductoDto } from './create-producto.dto';
-import { IsNotEmpty } from 'class-validator';
+import { IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
+import { Categoria } from 'src/categorias/entities/categoria.entity';
+import { ProductInterface } from '../interfaces/product.interface';
 
-export class UpdateProductoDto extends PartialType(CreateProductoDto) {
-        id: number;
-        @IsNotEmpty({message: "El nombre del producto no Puede ir vacio"})
-        nombre: string;
-        subtitulo: string;
-        descuento: number;
-        descripcion: string;
+export class UpdateProductoDto implements Partial<Omit<ProductInterface, 'id'>> {
+
+        @IsNotEmpty({ message: "El nombre del producto no Puede ir vacio" })
+        @IsString({ message: 'El nombre no es valido' })
+        @MaxLength(50, { message: 'El nombre no puede tener mas de 50 caracteres' })
+        @IsOptional()
+        nombre?: string;
+
+        @MaxLength(150, { message: 'El subtitulo no puede tener mas de 150 caracteres' })
+        @IsOptional()
+        subtitulo?: string;
+
+        @IsNumber()
+        @IsOptional()
+        descuento?: number;
+
+        @IsNotEmpty({ message: "La descripcion del producto no Puede ir vacia" })
+        @IsString({ message: 'La descripcion no es valida' })
+        @IsOptional()
+        descripcion?: string;
+
+        @IsOptional()
         imagen_url: string;
+
+        @IsOptional()
         imagen_url2: string;
-        stock: number;
-        precio: number;
+
+        @IsNotEmpty({ message: "El stock del producto no Puede ir vacio" })
+        @IsNumber({ maxDecimalPlaces: 0 }, { message: 'stock no válido' })
+        @IsOptional()
+        stock?: number;
+
+        @IsNotEmpty({ message: "El precio del producto no Puede ir vacio" })
+        @IsNumber({ maxDecimalPlaces: 3 }, { message: 'precio no válido' })
+        @IsOptional()
+        precio?: number;
+
+        @IsNotEmpty({ message: "La categoriaId del producto no Puede ir vacio" })
+        @IsNumber({ maxDecimalPlaces: 3 }, { message: 'categoriaId no válido' })
+        @IsOptional()
+        categoriaId?: Categoria;
 }

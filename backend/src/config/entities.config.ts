@@ -11,5 +11,5 @@ export const entities = [
     Usuario,
     Direccione,
     Role,
-    Cupone
+    Cupone,
 ]

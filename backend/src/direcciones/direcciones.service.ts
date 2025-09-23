@@ -8,12 +8,18 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class DireccionesService {
   constructor(
-        @InjectRepository(Direccione) private readonly direccionesRepository : Repository<Direccione>
-      ) {}
-  
+    @InjectRepository(Direccione)
+    private readonly direccionesRepository: Repository<Direccione>
+  ) { }
 
-  create(createDireccioneDto: CreateDireccioneDto) {
-    return this.direccionesRepository.save(createDireccioneDto);
+  async create(createDireccioneDto: CreateDireccioneDto, userId: number) {
+    const { ...address } = createDireccioneDto;
+    const newDireccion = this.direccionesRepository.create({
+      ...createDireccioneDto,
+      usuario: { id: userId },
+    });
+
+    return this.direccionesRepository.save(newDireccion);
   }
 
   findAll() {
@@ -21,12 +27,12 @@ export class DireccionesService {
   }
 
   async findOne(id: number) {
-    const direccion = await this.direccionesRepository.findOneBy({id})
-            // si no existe ese id retorna:
-            if (!direccion) {
-              throw new NotFoundException('La direccion no existe')
-            }
-            return direccion;
+    const direccion = await this.direccionesRepository.findOneBy({ id })
+    // si no existe ese id retorna:
+    if (!direccion) {
+      throw new NotFoundException('La direccion no existe')
+    }
+    return direccion;
   }
 
   async update(id: number, updateDireccioneDto: UpdateDireccioneDto) {
