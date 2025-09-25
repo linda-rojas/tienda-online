@@ -6,7 +6,7 @@ import { IdValidationPipe } from '../common/pipes/id-validation/id-validation.pi
 
 @Controller('categorias')
 export class CategoriasController {
-  constructor(private readonly categoriasService: CategoriasService) {}
+  constructor(private readonly categoriasService: CategoriasService) { }
 
   @Post()
   create(@Body() createCategoriaDto: CreateCategoriaDto) {

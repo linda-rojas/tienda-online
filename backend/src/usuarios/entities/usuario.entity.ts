@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UserInterface } from "../interfaces/user.interface";
 import { Direccione } from "../../direcciones/entities/direccione.entity";
 import { Role } from "../../roles/entities/role.entity";
@@ -20,7 +20,7 @@ export class Usuario implements UserInterface {
   @Column({ type: 'varchar', length: 100, unique: true, nullable: false })
   correo: string;
 
-  @Column({ type: 'text', nullable: false })
+  @Column({ type: 'text', nullable: false, select: false })
   contraseña: string;
 
   @OneToMany(() => Direccione, (direccion) => direccion.usuario, { cascade: true })
@@ -28,4 +28,5 @@ export class Usuario implements UserInterface {
 
   @ManyToOne(() => Role, (role) => role.usuarios, { cascade: true })
   role: Role;
+
 }

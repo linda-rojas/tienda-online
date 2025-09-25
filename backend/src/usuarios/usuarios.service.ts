@@ -8,6 +8,10 @@ import * as bcrypt from 'bcrypt';
 import { Role } from '../roles/entities/role.entity';
 import { Direccione } from 'src/direcciones/entities/direccione.entity';
 import { ValidationService } from 'src/services/validation.service';
+import { LoginUsuarioDto } from './dto/login-usuario.dto';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+// import { PasswordResetService } from './services/password-reset.service';
 
 @Injectable()
 export class UsuariosService {
@@ -16,52 +20,19 @@ export class UsuariosService {
     @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
     @InjectRepository(Direccione) private readonly direccioneRepository: Repository<Direccione>,
     @Inject(ValidationService) private readonly validationService: ValidationService,
+    private readonly jwtService: JwtService,
+    // private readonly passwordResetService: PasswordResetService
   ) { }
 
 
 
   // Crear usuario con direcciones
-  async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
-    const { roleId, direcciones, ...userData } = createUsuarioDto;
+  async create(createUsuarioDto: CreateUsuarioDto): Promise<{ user: Usuario, token: string }> {
+    return this.createUserWithRole(createUsuarioDto, 'cliente');
+  }
 
-    await this.validationService.existsOrFail(
-      this.usuarioRepository,
-      'correo',
-      createUsuarioDto.correo,
-      'El correo ingresado ya está en uso'
-    );
-
-    // el rol existe ?
-    const role = await this.roleRepository.findOne({ where: { id: roleId } });
-    if (!role) {
-      throw new NotFoundException(`Rol con ID ${roleId} no encontrado`);
-    }
-
-    // Encriptar la contraseña antes de guardarla
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(createUsuarioDto.contraseña, salt);
-
-    //  nuevo usuario con la contraseña encriptada
-    const newUser = this.usuarioRepository.create({
-      ...userData,
-      contraseña: hashedPassword,
-      role,
-    });
-
-    // Guardar el usuario
-    const savedUser = await this.usuarioRepository.save(newUser);
-
-    if (direcciones && direcciones.length > 0) {
-      const direccionesEntities = direcciones.map(dto =>
-        this.direccioneRepository.create({
-          ...dto,
-          usuario: savedUser,
-        }),
-      );
-      await this.direccioneRepository.save(direccionesEntities);
-    }
-
-    return savedUser;
+  async createAdmin(createUsuarioDto: CreateUsuarioDto): Promise<{ user: Usuario, token: string }> {
+    return this.createUserWithRole(createUsuarioDto, 'administrador');
   }
 
 
@@ -115,4 +86,81 @@ export class UsuariosService {
     const user = await this.findOne(id);
     await this.usuarioRepository.remove(user);
   }
+
+  async login(loginUsuarioDto: LoginUsuarioDto) {
+    const { correo, contraseña } = loginUsuarioDto
+    const user = await this.usuarioRepository.findOne({
+      where: { correo },
+      select: { correo: true, contraseña: true, id: true },
+      relations: { role: true }
+    })
+
+    if (!user) {
+      throw new NotFoundException(`Usuario con correo ${correo} no encontrado`);
+    }
+
+    if (!bcrypt.compareSync(contraseña, user.contraseña)) {
+      throw new NotFoundException(`Contraseña incorrecta ${contraseña}`);
+    }
+    return {
+      ...user,
+      token: this.getJwtToken({
+        id: user.id,
+        role: user.role.nombre
+      })
+    };
+  }
+
+  private getJwtToken(payload: JwtPayload,) {
+    const token = this.jwtService.sign(payload);
+    return token;
+  }
+
+  private async createUserWithRole(
+    dto: CreateUsuarioDto,
+    roleName: string
+  ): Promise<{ user: Usuario, token: string }> {
+    const { direcciones, ...userData } = dto;
+
+    await this.validationService.existsOrFail(
+      this.usuarioRepository,
+      'correo',
+      dto.correo,
+      'El correo ingresado ya está en uso'
+    );
+
+    const role = await this.roleRepository.findOneBy({ nombre: roleName });
+    if (!role) {
+      throw new NotFoundException(`El rol "${roleName}" no existe`);
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.contraseña, 10);
+
+    const newUser = this.usuarioRepository.create({
+      ...userData,
+      contraseña: hashedPassword,
+      role,
+    });
+
+    const savedUser = await this.usuarioRepository.save(newUser);
+
+    if (direcciones?.length > 0) {
+      const direccionesEntities = direcciones.map(dto =>
+        this.direccioneRepository.create({ ...dto, usuario: savedUser })
+      );
+      await this.direccioneRepository.save(direccionesEntities);
+    }
+
+    const token = this.getJwtToken({ id: savedUser.id, role: role.nombre });
+
+    return { user: savedUser, token };
+  }
+
+  // async requestPasswordReset(correo: string) {
+  //   return this.passwordResetService.requestReset(correo);
+  // }
+
+  // async resetPassword(token: string, nuevaContraseña: string) {
+  //   return this.passwordResetService.resetPassword(token, nuevaContraseña);
+  // }
 }

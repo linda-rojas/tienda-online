@@ -10,6 +10,7 @@ export class ValidationService {
         value: any,
         message: string,
     ) {
+
         const entity = await repository.findOne({ where: { [field]: value } as any });
 
         if (entity) {

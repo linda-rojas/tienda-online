@@ -7,14 +7,14 @@ import { GetProductsQueryDto } from './dto/get-product.dto';
 
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) {}
+  constructor(private readonly productosService: ProductosService) { }
 
   @Post()
   create(@Body() createProductoDto: CreateProductoDto) {
     return this.productosService.create(createProductoDto);
   }
 
-  
+
   @Get()
   findAll(@Query() query: GetProductsQueryDto) {
     const categoria = query.categoria_id ? query.categoria_id : null

@@ -6,7 +6,7 @@ import { IdValidationPipe } from '../common/pipes/id-validation/id-validation.pi
 
 @Controller('roles')
 export class RolesController {
-  constructor(private readonly rolesService: RolesService) {}
+  constructor(private readonly rolesService: RolesService) { }
 
   @Post()
   create(@Body() createRoleDto: CreateRoleDto) {

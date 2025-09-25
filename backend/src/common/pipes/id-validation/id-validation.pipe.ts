@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, ParseIntPipe } from '@nestjs/common';
 
 @Injectable()
-// pipes personalizados para separar resonsabilidades y no duplicar codigo
+// pipe personalizados para separar resonsabilidades y no duplicar codigo
 export class IdValidationPipe extends ParseIntPipe {
   constructor() {
     super({

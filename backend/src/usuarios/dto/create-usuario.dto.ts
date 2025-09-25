@@ -39,10 +39,6 @@ export class CreateUsuarioDto implements UserInterface {
     @IsDefined({ message: "El campo contraseña es obligatorio" })
     contraseña: string;
 
-    @IsNumber()
-    @IsNotEmpty({ message: "El campo rol no puede ir vacio" })
-    roleId: number;
-
     @IsArray({ message: 'Debes enviar un arreglo de direcciones' })
     @ArrayNotEmpty({ message: 'Debes incluir una dirección' })
     @ValidateNested({ each: true })

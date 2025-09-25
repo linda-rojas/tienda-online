@@ -6,7 +6,7 @@ import { IdValidationPipe } from '../common/pipes/id-validation/id-validation.pi
 
 @Controller('transacciones')
 export class TransaccionsController {
-  constructor(private readonly transaccionsService: TransaccionsService) {}
+  constructor(private readonly transaccionsService: TransaccionsService) { }
 
   @Post()
   create(@Body() createTransaccionDto: CreateTransaccionDto) {

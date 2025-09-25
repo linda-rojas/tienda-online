@@ -1,9 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { IdValidationPipe } from '../common/pipes/id-validation/id-validation.pipe';
 import { PhoneValidationPipe } from '../common/pipes/phone-validation/phone-validation.pipe';
+import { LoginUsuarioDto } from './dto/login-usuario.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/usuarios/decorators/get-user.decorator';
+import { Usuario } from './entities/usuario.entity';
+import { RawHeaders } from 'src/common/decorators/raw-headers.decorator';
+import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from './guards/roles.guard';
+// import { RequestPasswordResetDto } from 'src/mailer/dto/request-password-reset.dto';
+// import { ResetPasswordDto } from 'src/mailer/dto/reset-password.dto';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -19,25 +28,74 @@ export class UsuariosController {
     return this.usuariosService.findAll();
   }
 
-
-  @Get(':id')
-  findOne(@Param('id', IdValidationPipe) id: string) {
-    return this.usuariosService.findOne(+id);
-  }
-
   @Patch(':id')
-  update(@Param('id', IdValidationPipe) id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuariosService.update(+id, updateUsuarioDto);
+  update(@Param('id', IdValidationPipe) id: number, @Body() updateUsuarioDto: UpdateUsuarioDto) {
+    return this.usuariosService.update(id, updateUsuarioDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', IdValidationPipe) id: string) {
-    return this.usuariosService.remove(+id);
+  remove(@Param('id', IdValidationPipe) id: number) {
+    return this.usuariosService.remove(id);
   }
 
   @Get('validation-phone/:celular')
   validationPhone(@Param('celular', PhoneValidationPipe) celular: string) {
     return `Número válido: ${celular}`;
   }
-}
 
+  @Post('crear-admin')
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Roles('administrador')
+  createAdmin(@Body() dto: CreateUsuarioDto) {
+    return this.usuariosService.createAdmin(dto);
+  }
+
+  // @Post('solicitud-de-restablecimiento-de-contraseña')
+  // async requestPasswordReset(@Body() body: RequestPasswordResetDto) {
+  //   return this.usuariosService.requestPasswordReset(body.correo);
+  // }
+
+  // @Patch('restablecer-contraseña')
+  // async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+  //   return this.usuariosService.resetPassword(resetPasswordDto.token, resetPasswordDto.nuevaContraseña);
+  // }
+
+
+  @Post('login')
+  loginUser(@Body() loginUsuarioDto: LoginUsuarioDto) {
+    return this.usuariosService.login(loginUsuarioDto);
+  }
+
+  @Get('administrador')
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Roles('administrador')
+  adminOnlyRoute(@GetUser() user: Usuario) {
+    return {
+      message: 'Acceso permitido solo para administradores',
+      user
+    };
+  }
+
+  @Get('privado')
+  @UseGuards(AuthGuard())
+  testingPrivateRoute(
+    @Req() request: Express.Request,
+    @GetUser() user: Usuario,
+    @GetUser('correo') userEmail: string,
+    @RawHeaders() rawHeaders: string[]
+  ) {
+    return {
+      ok: true,
+      message: 'Tienes acceso a la ruta privada',
+      user,
+      userEmail,
+      rawHeaders
+    };
+  }
+
+
+  @Get(':id')
+  findOne(@Param('id', IdValidationPipe) id: number) {
+    return this.usuariosService.findOne(id);
+  }
+}
