@@ -1,9 +1,5 @@
-import { Header } from '../components/Header'
+import { Header } from '../ui/mainNav/Header'
 
 export default function Home() {
-    return (
-        <>
-            <Header />
-        </>
-    )
+    return <></>
 }

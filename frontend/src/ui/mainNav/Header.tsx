@@ -1,8 +1,8 @@
 import { FaUser, FaSearch, FaShoppingCart } from 'react-icons/fa'
 import { IoMenu } from 'react-icons/io5'
 import { LogoAutocaucho } from './LogoAutoCaucho'
-import { NavLinks } from './NavLinks'
-import { montserrat, roboto } from '../ui/fonts'
+import { montserrat, roboto } from '../fonts'
+import NavLinksServer from './NavLinksServer'
 
 export function Header() {
     return (
@@ -24,21 +24,21 @@ export function Header() {
                 </div>
                 <section className="flex justify-center items-center gap-8 md:gap-3 lg:gap-8">
                     <div className="hidden items-center gap-2 cursor-pointer md:flex md:gap-1 lg:flex ">
-                        <span className={`${montserrat.className} text-white text-center`}>
+                        <span
+                            className={`${montserrat.className} text-white text-center md:hidden lg:flex`}
+                        >
                             Mi cuenta
                         </span>
                         <FaUser className="h-5 w-5 text-white" />
                     </div>
                     <div className="relative cursor-pointer">
                         <span
-                            className={`w-5 h-5 absolute text-center top-[-10] left-1/2 text-[14px] font-bold ${roboto.className} bg-[#408FD8] text-white rounded-full`}
+                            className={`color-blue-bg w-5 h-5 absolute text-center top-[-10] left-1/2 text-[14px] font-bold ${roboto.className} text-white rounded-full`}
                         >
                             2
                         </span>
-                        <figure className="rounded-full bg-white p-2 hover:bg-[#408FD8] transition-colors duration-300">
-                            <FaShoppingCart
-                                className={`text-[#b21b13]  h-5 w-5 hover:text-white`}
-                            />
+                        <figure className="hover-bg-blue rounded-full bg-white p-2 transition-colors duration-300">
+                            <FaShoppingCart className={`color-red h-5 w-5 hover:text-white`} />
                         </figure>
                     </div>
                 </section>
@@ -54,7 +54,7 @@ export function Header() {
                     />
                     <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 underline" />
                 </div>
-                <NavLinks />
+                <NavLinksServer />
             </section>
         </header>
     )

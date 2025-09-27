@@ -18,8 +18,11 @@ export const CategorySchema = z.object({
     nombre: z.string()
 })
 
+export const CategoriesResponseSchemas = z.array(CategorySchema)
+
 export const CategoryWithProductsResponseSchema = CategorySchema.extend({
     productos: z.array(ProductSchema)
 });
 
 export type Product = z.infer<typeof ProductSchema>
+export type Category = z.infer<typeof CategorySchema>

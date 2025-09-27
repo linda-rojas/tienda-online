@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+.hover-bg-blue:hover {
+    background-color: #408FD8;
+}
+
 .hover-bg-red:hover {
     background-color: #780f09;
 }
@@ -35,6 +39,7 @@
 .color-blue {
     color: #408FD8;
 }
+
 
 .color-blue-footer-bg {
     background-color: #023D71;

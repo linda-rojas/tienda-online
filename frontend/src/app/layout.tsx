@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import '../ui/globals.css'
 import { montserrat, roboto } from '../ui/fonts'
+import { Header } from '@/ui/mainNav/Header'
 
 export const metadata: Metadata = {
     title: 'Create Next App',
@@ -14,7 +15,11 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${roboto} ${montserrat} antialiased`}>{children}</body>
+            <body className={`${roboto} ${montserrat} antialiased`}>
+                <Header />
+                <div>{children}</div>
+                <aside></aside>
+            </body>
         </html>
     )
 }
