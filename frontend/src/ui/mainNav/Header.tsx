@@ -1,8 +1,10 @@
-import { FaUser, FaSearch, FaShoppingCart } from 'react-icons/fa'
+import { FaUser, FaSearch } from 'react-icons/fa'
 import { IoMenu } from 'react-icons/io5'
 import { LogoAutocaucho } from './LogoAutoCaucho'
 import { montserrat, roboto } from '../fonts'
 import NavLinksServer from './NavLinksServer'
+import { CartIcon } from '@/components/cart/CartIcon'
+import { CartPanel } from '@/components/cart/CartPanel'
 
 export function Header() {
     return (
@@ -31,16 +33,8 @@ export function Header() {
                         </span>
                         <FaUser className="h-5 w-5 text-white" />
                     </div>
-                    <div className="relative cursor-pointer">
-                        <span
-                            className={`color-blue-bg w-5 h-5 absolute text-center top-[-10] left-1/2 text-[14px] font-bold ${roboto.className} text-white rounded-full`}
-                        >
-                            2
-                        </span>
-                        <figure className="hover-bg-blue rounded-full bg-white p-2 transition-colors duration-300">
-                            <FaShoppingCart className={`color-red h-5 w-5 hover:text-white`} />
-                        </figure>
-                    </div>
+                    <CartIcon />
+                    <CartPanel />
                 </section>
             </nav>
             <section className={`color-blue-bg h-[50px] w-full flex items-center justify-center `}>
