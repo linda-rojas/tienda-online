@@ -3,14 +3,19 @@ import { Store } from "./interfaces/store.interface";
 import { devtools } from "zustand/middleware";
 import { CouponResponseSchema, ShoppingCart } from "./schemas/schemas";
 
-export const useStore = create<Store>()(devtools((set, get) => ({
+const initialState = {
     total: 0,
     contents: [],
+    discount: 0,
     coupon: {
         porcentaje: 0,
         nombre: '',
         message: ''
-    },
+    }
+}
+
+export const useStore = create<Store>()(devtools((set, get) => ({
+    ...initialState,
     addToCard: (product) => {
         const { id: productId, categoriaId, ...data } = product
         let contents: ShoppingCart = []
@@ -50,6 +55,10 @@ export const useStore = create<Store>()(devtools((set, get) => ({
             contents: state.contents.filter(item => item.productId !== id)
         }))
 
+        if (!get().contents.length) {
+            get().clearOrder()
+        }
+
         get().calculateTotal()
     },
     calculateTotal: () => {
@@ -58,18 +67,37 @@ export const useStore = create<Store>()(devtools((set, get) => ({
             total
         }))
     },
-    applyCoupon: async (nombre) => {
+    applyCoupon: async (nombreCupon) => {
         const req = await fetch('api/coupones', {
             method: 'POST',
             body: JSON.stringify({
-                nombre: nombre
+                cupon_nombre: nombreCupon,
             })
         })
 
         const json = await req.json()
         const coupon = CouponResponseSchema.parse(json)
         set(() => ({
-            coupon
+            coupon: coupon
+        }))
+
+        if (coupon.porcentaje) {
+            get().applyDiscount()
+        }
+    },
+    applyDiscount: () => {
+        const subTotalAmount = get().contents.reduce((total, item) => total + (item.quantity * item.precio), 0)
+        const discount = (get().coupon.porcentaje / 100) * subTotalAmount
+        const total = subTotalAmount - discount
+
+        set(() => ({
+            discount,
+            total
+        }))
+    },
+    clearOrder: () => {
+        set(() => ({
+            ...initialState
         }))
     }
 })))

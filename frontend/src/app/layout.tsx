@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import '../ui/globals.css'
 import { montserrat, roboto } from '../ui/fonts'
-import { Header } from '@/ui/mainNav/Header'
+import HeaderServer from '@/ui/mainNav/HeaderServer'
+// import ToastNotification from '@/ui/ToastNotification'
 
 export const metadata: Metadata = {
     title: 'Create Next App',
@@ -16,9 +17,10 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${roboto} ${montserrat} antialiased`}>
-                <Header />
+                <HeaderServer />
                 <div>{children}</div>
                 <aside></aside>
+                {/* <ToastNotification /> */}
             </body>
         </html>
     )

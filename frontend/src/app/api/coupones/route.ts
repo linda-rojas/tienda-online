@@ -1,8 +1,8 @@
 export async function POST(request: Request) {
     try {
         const coupon = await request.json();
-
-        const backendResponse = await fetch("http://localhost:3000/cupones", {
+        const urlBackend = `${process.env.NEXT_PUBLIC_BACKEND_URL}/cupones/aplicar-cupon`
+        const backendResponse = await fetch(urlBackend, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

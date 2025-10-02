@@ -5,8 +5,12 @@ import { redirect } from 'next/navigation'
 type Params = Promise<{ categoryId: string }>
 
 async function getProducts(categoryId: string) {
-    const url = `http://localhost:3000/categorias/${categoryId}?productos=true`
-    const req = await fetch(url)
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/categorias/${categoryId}?productos=true`
+    const req = await fetch(url, {
+        next: {
+            tags: ['products-by-category'],
+        },
+    })
     const json = await req.json()
     if (!req.ok) {
         redirect('../../no-encontrado')

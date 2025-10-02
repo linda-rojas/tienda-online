@@ -1,18 +1,27 @@
 import { FaUser, FaSearch } from 'react-icons/fa'
-import { IoMenu } from 'react-icons/io5'
 import { LogoAutocaucho } from './LogoAutoCaucho'
-import { montserrat, roboto } from '../fonts'
+import { montserrat } from '../fonts'
 import NavLinksServer from './NavLinksServer'
 import { CartIcon } from '@/components/cart/CartIcon'
 import { CartPanel } from '@/components/cart/CartPanel'
+import { NavLinksClient } from './NavLinksClient'
+import { MobileMenuPanel } from '@/components/mobile/MobileMenuPanel'
+import { MenuIcon } from '@/components/mobile/MenuIcon'
+import { Category } from '@/schemas/schemas'
 
-export function Header() {
+interface HeaderProps {
+    categories: Category[]
+}
+
+export function Header({ categories }: HeaderProps) {
     return (
         <header className="sticky top-0 z-50">
             <nav
                 className={`color-red-bg flex items-center justify-between px-6 p-2 md:px-6 lg:px-12`}
             >
-                <IoMenu className="h-9 w-9 text-white cursor-pointer md:hidden lg:hidden" />
+                {' '}
+                <MenuIcon />
+                <MobileMenuPanel categories={categories} />
                 <LogoAutocaucho />
                 <div
                     className={`color-gray-md-bg hidden rounded-[10px] md:relative md:block md:top-0 lg:block`}
@@ -48,7 +57,7 @@ export function Header() {
                     />
                     <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 underline" />
                 </div>
-                <NavLinksServer />
+                <NavLinksServer Component={NavLinksClient} />
             </section>
         </header>
     )

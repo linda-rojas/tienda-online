@@ -8,17 +8,16 @@ export default function CouponForm() {
     const hadleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const formData = new FormData(e.currentTarget)
-        const couponName = formData.get('nombre')?.toString()!
-
+        const couponName = formData.get('coupon_name')?.toString()!
         console.log('Cupón enviado:', couponName)
-
+        if (!couponName.length) return
         await applyCoupon(couponName)
-        e.currentTarget.reset() // limpia el campo después
+        // e.currentTarget.reset() // limpia el campo después
     }
 
     return (
         <>
-            <p className="py-5 font-semibold border-t border-gray-300 text-gray-600">
+            <p className="py-2 text-[15px] font-semibold border-t border-gray-300 text-gray-600">
                 Canjear Cupón
             </p>
             <form className="flex" onSubmit={hadleSubmit}>

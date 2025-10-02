@@ -39,15 +39,46 @@ const ShoppingCartContentsSchema = ProductSchema.pick({
 export const ShoppingCartSchema = z.array(ShoppingCartContentsSchema)
 
 export const CouponResponseSchema = z.object({
-    nombre: z.string(),
+    nombre: z.string().default(''),
     message: z.string(),
     porcentaje: z.coerce.number().min(0).max(100).default(0)
 })
 
+// export const CouponResponseSuccessSchema = z.object({
+//     nombre: z.string(),
+//     porcentaje: z.coerce.number().min(0).max(100).default(0)
+// })
+
+// export const CouponResponseErrorSchema = z.object({
+//     message: z.string(),
+// })
+
+const OrderContentSchema = z.object({
+    productoId: z.number(),
+    cantidad: z.number(),
+    precio: z.number()
+})
+
+export const OrderSchema = z.object({
+    total: z.number(),
+    cupon: z.string(),
+    contents: z.array(OrderContentSchema).min(1, { message: 'El Carrito no puede ir vacio' })
+})
+
+export const SuccessResponseSchema = z.object({
+    message: z.string()
+})
+export const ErrorResponseSchema = z.object({
+    message: z.array(z.string()),
+    error: z.string(),
+    statusCode: z.number()
+})
 
 export type Product = z.infer<typeof ProductSchema>
 export type Category = z.infer<typeof CategorySchema>
 export type ShoppingCart = z.infer<typeof ShoppingCartSchema>
 export type CartItem = z.infer<typeof ShoppingCartContentsSchema>
+// export type Coupon = z.infer<typeof CouponResponseSuccessSchema | typeof CouponResponseErrorSchema>
+
 export type Coupon = z.infer<typeof CouponResponseSchema>
 

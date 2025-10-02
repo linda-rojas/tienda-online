@@ -5,10 +5,12 @@ import { useStore } from '@/useStore'
 import ShoppingCartItem from './ShopingCartItem'
 import Amount from '@/ui/cart/Amount'
 import CouponForm from './CouponForm'
+import SubmitOrderForm from './SubmitOrderForm'
 
 export function CartPanel() {
     const contents = useStore((state) => state.contents)
     const total = useStore((state) => state.total)
+    const discount = useStore((state) => state.discount)
 
     const { isOpen, closeCart } = useCartToggle()
 
@@ -43,12 +45,13 @@ export function CartPanel() {
                             ))}
                         </ul>
                         <dl className="space-y-5 text-sm py-6 border-gray-300 boder-t text-gray-800">
+                            {discount ? (
+                                <Amount label="Descuento" amount={discount} discount={true} />
+                            ) : null}
                             <Amount label="Total a Pagar:" amount={total} />
                         </dl>
                         <CouponForm />
-                        <button className="mt-4 w-full color-blue-footer-bg text-white py-2 rounded cursor-pointer">
-                            Comprar
-                        </button>
+                        <SubmitOrderForm />
                     </>
                 ) : (
                     <p className="text-center text-xl font-bold mb-4 text-gray-700">
