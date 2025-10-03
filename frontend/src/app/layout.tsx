@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import '../ui/globals.css'
 import { montserrat, roboto } from '../ui/fonts'
 import HeaderServer from '@/ui/mainNav/HeaderServer'
+import FooterServer from '@/components/footer/foooterServer'
 // import ToastNotification from '@/ui/ToastNotification'
 
 export const metadata: Metadata = {
@@ -18,8 +19,8 @@ export default function RootLayout({
         <html lang="en">
             <body className={`${roboto} ${montserrat} antialiased`}>
                 <HeaderServer />
-                <div>{children}</div>
-                <aside></aside>
+                <main>{children}</main>
+                <FooterServer/>
                 {/* <ToastNotification /> */}
             </body>
         </html>
