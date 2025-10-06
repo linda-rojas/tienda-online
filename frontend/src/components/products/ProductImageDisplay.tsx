@@ -20,7 +20,7 @@ const ProductImageDisplay = ({ imagen_url, imagen_url2, nombre }: ProductImageDi
   }
 
   return (
-    <div>
+    <div className=''>
       {/* Imagen tamaño grandee */}
       <div className="relative w-[70%] md:w-[80%] lg:w-[80%] h-[400px] mx-auto flex justify-center mb-4">
         <Image

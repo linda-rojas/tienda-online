@@ -3,7 +3,7 @@ import '../ui/globals.css'
 import { montserrat, roboto } from '../ui/fonts'
 import HeaderServer from '@/ui/mainNav/HeaderServer'
 import FooterServer from '@/components/footer/foooterServer'
-// import ToastNotification from '@/ui/ToastNotification'
+import ToastNotification from '@/ui/ToastNotification'
 
 export const metadata: Metadata = {
     title: 'Create Next App',
@@ -18,10 +18,8 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${roboto} ${montserrat} antialiased`}>
-                <HeaderServer />
                 <main>{children}</main>
-                <FooterServer/>
-                {/* <ToastNotification /> */}
+                <ToastNotification />
             </body>
         </html>
     )

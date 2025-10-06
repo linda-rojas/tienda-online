@@ -11,8 +11,8 @@ import { Usuario } from './entities/usuario.entity';
 import { RawHeaders } from 'src/common/decorators/raw-headers.decorator';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
-// import { RequestPasswordResetDto } from 'src/mailer/dto/request-password-reset.dto';
-// import { ResetPasswordDto } from 'src/mailer/dto/reset-password.dto';
+import { RequestPasswordResetDto } from 'src/mailer/dto/request-password-reset.dto';
+import { ResetPasswordDto } from 'src/mailer/dto/reset-password.dto';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -28,10 +28,6 @@ export class UsuariosController {
     return this.usuariosService.findAll();
   }
 
-  @Patch(':id')
-  update(@Param('id', IdValidationPipe) id: number, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuariosService.update(id, updateUsuarioDto);
-  }
 
   @Delete(':id')
   remove(@Param('id', IdValidationPipe) id: number) {
@@ -50,15 +46,15 @@ export class UsuariosController {
     return this.usuariosService.createAdmin(dto);
   }
 
-  // @Post('solicitud-de-restablecimiento-de-contraseña')
-  // async requestPasswordReset(@Body() body: RequestPasswordResetDto) {
-  //   return this.usuariosService.requestPasswordReset(body.correo);
-  // }
+  @Post('solicitud-de-restablecimiento-de-contrasena')
+  async requestPasswordReset(@Body() body: RequestPasswordResetDto) {
+    return this.usuariosService.requestPasswordReset(body.correo);
+  }
 
-  // @Patch('restablecer-contraseña')
-  // async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-  //   return this.usuariosService.resetPassword(resetPasswordDto.token, resetPasswordDto.nuevaContraseña);
-  // }
+  @Patch('restablecer-contrasena')
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.usuariosService.resetPassword(resetPasswordDto.token, resetPasswordDto.nuevaContraseña);
+  }
 
 
   @Post('login')
@@ -93,6 +89,10 @@ export class UsuariosController {
     };
   }
 
+  @Patch(':id')
+  update(@Param('id', IdValidationPipe) id: number, @Body() updateUsuarioDto: UpdateUsuarioDto) {
+    return this.usuariosService.update(id, updateUsuarioDto);
+  }
 
   @Get(':id')
   findOne(@Param('id', IdValidationPipe) id: number) {

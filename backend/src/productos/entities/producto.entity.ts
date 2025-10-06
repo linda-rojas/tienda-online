@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ProductInterface } from "../interfaces/product.interface";
 import { Categoria } from "../../categorias/entities/categoria.entity";
 
@@ -6,7 +6,7 @@ import { Categoria } from "../../categorias/entities/categoria.entity";
 export class Producto implements ProductInterface {
     @PrimaryGeneratedColumn()
     id: number
-    
+
     @Column({ type: 'varchar', length: 50, nullable: false, unique: true })
     nombre: string
 
@@ -31,7 +31,11 @@ export class Producto implements ProductInterface {
     @Column({ type: 'numeric', nullable: false })
     precio: number;
 
+    @Column({ name: "categoriaId", type: "int", nullable: false })
+    categoriaId: number;
+
     @ManyToOne(() => Categoria)
+    @JoinColumn({ name: "categoriaId" })
     categoria: Categoria;
 }
 

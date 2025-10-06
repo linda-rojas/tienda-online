@@ -11,9 +11,15 @@ export default function SubmitOrderForm() {
 
     const order = {
         total,
-        coupon,
-        contents,
+        cupon: coupon,
+        contents: contents.map((item) => ({
+            productoId: item.productId,
+            cantidad: item.quantity,
+            precio: item.precio,
+        })),
     }
+
+    console.log('Order in form:', order)
 
     const submitOrderWithData = submitOrder.bind(null, order)
 
@@ -31,6 +37,7 @@ export default function SubmitOrderForm() {
             clearOrder()
         }
     }, [state])
+
     return (
         <form action={dispatch}>
             <input

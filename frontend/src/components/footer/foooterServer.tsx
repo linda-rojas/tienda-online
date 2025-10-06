@@ -1,4 +1,3 @@
-import { Header } from '@/ui/mainNav/Header'
 import { CategoriesResponseSchemas } from '@/schemas/schemas'
 import Footer from './footer'
 

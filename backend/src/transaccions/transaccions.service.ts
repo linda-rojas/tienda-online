@@ -1,41 +1,42 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTransaccionDto } from './dto/create-transaccion.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Transaccion, TransaccionContenidos } from './entities/transaccion.entity';
+import { Transaccion } from './entities/transaccion.entity';
 import { Between, FindManyOptions, Repository } from 'typeorm';
 import { Producto } from '../productos/entities/producto.entity';
 import { endOfDay, isValid, parseISO, startOfDay } from 'date-fns';
 import { CuponesService } from '../cupones/cupones.service';
+import { TransaccionContenidos } from './entities/transaccion-contenidos.entity';
 
 @Injectable()
 export class TransaccionsService {
   constructor(
-    @InjectRepository(Transaccion) private readonly transaccionesRepository : Repository<Transaccion>,
-    @InjectRepository(TransaccionContenidos) private readonly transaccionesContenidosRepository : Repository<TransaccionContenidos>,
-    @InjectRepository(Producto) private readonly productosRepository : Repository<Producto>,
-    private readonly couponService : CuponesService
-    ) {}
+    @InjectRepository(Transaccion) private readonly transaccionesRepository: Repository<Transaccion>,
+    @InjectRepository(TransaccionContenidos) private readonly transaccionesContenidosRepository: Repository<TransaccionContenidos>,
+    @InjectRepository(Producto) private readonly productosRepository: Repository<Producto>,
+    private readonly couponService: CuponesService
+  ) { }
 
 
   async create(createTransaccionDto: CreateTransaccionDto) {
 
-    await this.productosRepository.manager.transaction( async (transactionEntityManager) => {
-    const transaccion = new Transaccion()
-    const total = createTransaccionDto.contents.reduce((total, item) => total + (item.cantidad * item.precio), 0)
+    await this.productosRepository.manager.transaction(async (transactionEntityManager) => {
+      const transaccion = new Transaccion()
+      const total = createTransaccionDto.contents.reduce((total, item) => total + (item.cantidad * item.precio), 0)
       transaccion.total = total
 
-        if (createTransaccionDto.cupon) {
-          const coupon = await this.couponService.applyCupon(createTransaccionDto.cupon)
-          const discount = (coupon.porcentaje / 100) * total
-          transaccion.descuento = discount
-          transaccion.cupon = coupon.nombre
-          transaccion.total -= discount
-        }
+      if (createTransaccionDto.cupon) {
+        const coupon = await this.couponService.applyCupon(createTransaccionDto.cupon)
+        const discount = (coupon.porcentaje / 100) * total
+        transaccion.descuento = discount
+        transaccion.cupon = coupon.nombre
+        transaccion.total -= discount
+      }
 
       for (const contents of createTransaccionDto.contents) {
         const errors: string[] = [];
-        
-        const producto = await transactionEntityManager.findOneBy( Producto, {id: contents.productoId})
+
+        const producto = await transactionEntityManager.findOneBy(Producto, { id: contents.productoId })
 
         if (!producto) {
           errors.push(`Producto con id: ${contents.productoId} no fue encontrado`)
@@ -60,7 +61,7 @@ export class TransaccionsService {
       }
     })
 
-    return "Venta almacenada correctamente";
+    return { message: "Venta almacenada correctamente" };
   }
 
   findAll(transacciondate?: string) {
@@ -101,8 +102,8 @@ export class TransaccionsService {
     })
 
     if (!transaction) {
-        throw new NotFoundException('Transacción no encontrada')
-      }
+      throw new NotFoundException('Transacción no encontrada')
+    }
 
     return transaction;
   }
@@ -112,19 +113,19 @@ export class TransaccionsService {
     const trasaction = await this.findOne(id)
 
     for (const contents of trasaction.contents) {
-      const product = await this.productosRepository.findOneBy({id: contents.producto.id})
+      const product = await this.productosRepository.findOneBy({ id: contents.producto.id })
       if (product) {
         product.stock += contents.cantidad
         await this.productosRepository.save(product)
       }
 
-      const transactionContents = await this.transaccionesContenidosRepository.findOneBy({id: contents.id})
+      const transactionContents = await this.transaccionesContenidosRepository.findOneBy({ id: contents.id })
       if (transactionContents) {
         await this.transaccionesContenidosRepository.remove(transactionContents)
       }
     }
 
-      await this.transaccionesRepository.remove(trasaction)
-      return {message: 'Venta Eliminada'};
+    await this.transaccionesRepository.remove(trasaction)
+    return { message: 'Venta Eliminada' };
   }
 }

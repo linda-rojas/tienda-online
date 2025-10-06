@@ -1,6 +1,6 @@
 import { IsDefined, IsNotEmpty, IsNumber, isNumber, IsOptional, IsString, MaxLength, Min } from "class-validator";
 import { ProductInterface } from "../interfaces/product.interface";
-import { Categoria } from "../../categorias/entities/categoria.entity";
+import { Transform, Type } from "class-transformer";
 
 export class CreateProductoDto implements Omit<ProductInterface, 'id'> {
 
@@ -10,10 +10,15 @@ export class CreateProductoDto implements Omit<ProductInterface, 'id'> {
     @MaxLength(50, { message: 'El nombre no puede tener mas de 50 caracteres' })
     nombre: string;
 
+    @IsNotEmpty({ message: "El nombre del producto no Puede ir vacio" })
+    @IsString({ message: 'El nombre no es valido' })
     @MaxLength(150, { message: 'El subtitulo no puede tener mas de 150 caracteres' })
     subtitulo: string;
 
     @IsNumber()
+    @Min(0)
+    @Type(() => Number)
+    @Transform(({ value }) => (value === undefined || value === null ? 0 : value))
     @IsOptional()
     descuento: number;
 
@@ -36,5 +41,5 @@ export class CreateProductoDto implements Omit<ProductInterface, 'id'> {
 
     @IsNotEmpty({ message: "La categoriaId del producto no Puede ir vacio" })
     @IsNumber({ maxDecimalPlaces: 3 }, { message: 'categoriaId no válido' })
-    categoriaId: Categoria;
+    categoriaId: number;
 }

@@ -2,35 +2,37 @@ import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Usuario } from "../entities/usuario.entity";
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import bcrypt from "node_modules/bcryptjs";
+import { MailService } from "src/mailer/mailer.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class PasswordResetService {
     constructor(
         private readonly jwtService: JwtService,
-        // private readonly mailerService: MailerService,
+        private readonly mailService: MailService,
         @InjectRepository(Usuario)
         private readonly usuarioRepository: Repository<Usuario>,
+        private readonly configService: ConfigService
     ) { }
 
     async requestReset(correo: string): Promise<string> {
         const user = await this.usuarioRepository.findOneBy({ correo });
-
+        const responseText = 'Si el correo está registrado, se enviará un enlace de recuperación';
         // Mensaje genérico para evitar fuga de datos
-        if (!user) return 'Si el correo está registrado, se enviará un enlace de recuperación';
+        if (!user) return responseText;
 
         const payload = { id: user.id };
         const token = this.jwtService.sign(payload, {
-            expiresIn: '30m',
+            expiresIn: '1h',
             secret: process.env.JWT_RESET_SECRET,
         });
 
-        const resetLink = `https://tuapp.com/reset-password?token=${token}`;
-
-        // await this.mailerService.sendResetPasswordEmail(user.correo, resetLink);
-
-        return 'Si el correo está registrado, se enviará un enlace de recuperación';
+        const url = new URL(this.configService.get('FRONTEND_URL') ?? '');
+        url.searchParams.set('token', token);
+        await this.mailService.sendResetPasswordEmail(user, url.toString());
+        return responseText;
     }
 
     async resetPassword(token: string, nuevaContraseña: string): Promise<string> {

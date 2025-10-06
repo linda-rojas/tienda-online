@@ -19,7 +19,7 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
                     nombre={product.nombre}
                 />
             </div>
-            <div className="flex flex-col gap-12 ">
+            <div className="flex flex-col gap-12 bg-gray-100 p-6">
                 <h1 className="text-2xl font-bold ">{product.nombre}</h1>
                 <article className="flex flex-col gap-6">
                     <span className="font-semibold text-[20px] text-gray-700">
@@ -28,7 +28,7 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
                     <p className="text-gray-700 leading-relaxed">{product.descripcion}</p>
                 </article>
             </div>
-            <div className="w-full flex flex-col gap-6 text-gray-800">
+            <div className="w-full flex flex-col gap-6 text-gray-800 bg-gray-100 p-4">
                 <article className="flex flex-col gap-2">
                     <span className="font-bold  text-[18px]">Referencia: </span>
                     <span className="ml-10 text-[15px]">{product.subtitulo}</span>

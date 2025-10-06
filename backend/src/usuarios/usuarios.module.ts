@@ -10,7 +10,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
-// import { PasswordResetService } from './services/password-reset.service';
+import { PasswordResetService } from './services/password-reset.service';
+import { CustomMailerModule } from 'src/mailer/mailer.module';
 
 @Module({
   imports: [
@@ -24,15 +25,22 @@ import { JwtStrategy } from './strategies/jwt.strategy';
         secret: configService.get('JWT_SECRET'),
         signOptions: { expiresIn: '1h' },
       })
-    })
-    // JwtModule.register({
-    //   secret: process.env.JWT_SECRET,
-    //   signOptions: { expiresIn: '1h' },
-    // })
+    }),
+    CustomMailerModule,
   ],
   controllers: [UsuariosController],
-  providers: [UsuariosService, ValidationService, JwtStrategy],
-  exports: [TypeOrmModule, JwtStrategy, PassportModule, JwtModule]
+  providers: [
+    UsuariosService,
+    ValidationService,
+    JwtStrategy,
+    PasswordResetService
+  ],
+  exports: [
+    TypeOrmModule,
+    JwtStrategy,
+    PassportModule,
+    JwtModule
+  ]
 })
 export class UsuariosModule { }
 

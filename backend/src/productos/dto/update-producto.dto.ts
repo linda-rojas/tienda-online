@@ -1,6 +1,6 @@
-import { IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
-import { Categoria } from 'src/categorias/entities/categoria.entity';
+import { IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 import { ProductInterface } from '../interfaces/product.interface';
+import { Transform, Type } from 'class-transformer';
 
 export class UpdateProductoDto implements Partial<Omit<ProductInterface, 'id'>> {
 
@@ -10,11 +10,16 @@ export class UpdateProductoDto implements Partial<Omit<ProductInterface, 'id'>> 
         @IsOptional()
         nombre?: string;
 
+        @IsNotEmpty({ message: "El nombre del producto no Puede ir vacio" })
+        @IsString({ message: 'El nombre no es valido' })
         @MaxLength(150, { message: 'El subtitulo no puede tener mas de 150 caracteres' })
         @IsOptional()
         subtitulo?: string;
 
         @IsNumber()
+        @Min(0)
+        @Type(() => Number)
+        @Transform(({ value }) => (value === undefined || value === null ? 0 : value))
         @IsOptional()
         descuento?: number;
 
@@ -42,5 +47,5 @@ export class UpdateProductoDto implements Partial<Omit<ProductInterface, 'id'>> 
         @IsNotEmpty({ message: "La categoriaId del producto no Puede ir vacio" })
         @IsNumber({ maxDecimalPlaces: 3 }, { message: 'categoriaId no válido' })
         @IsOptional()
-        categoriaId?: Categoria;
+        categoriaId?: number;
 }

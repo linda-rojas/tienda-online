@@ -1,6 +1,5 @@
-import { FaUser, FaSearch } from 'react-icons/fa'
+import { FaSearch } from 'react-icons/fa'
 import { LogoAutocaucho } from './LogoAutoCaucho'
-import { montserrat } from '../fonts'
 import NavLinksServer from './NavLinksServer'
 import { CartIcon } from '@/components/cart/CartIcon'
 import { CartPanel } from '@/components/cart/CartPanel'
@@ -8,6 +7,7 @@ import { NavLinksClient } from './NavLinksClient'
 import { MobileMenuPanel } from '@/components/mobile/MobileMenuPanel'
 import { MenuIcon } from '@/components/mobile/MenuIcon'
 import { Category } from '@/schemas/schemas'
+import AccountLink from '@/components/ui/AccountLink'
 
 interface HeaderProps {
     categories: Category[]
@@ -34,14 +34,7 @@ export function Header({ categories }: HeaderProps) {
                     <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 underline" />
                 </div>
                 <section className="flex justify-center items-center gap-8 md:gap-3 lg:gap-8">
-                    <div className="hidden items-center gap-2 cursor-pointer md:flex md:gap-1 lg:flex ">
-                        <span
-                            className={`${montserrat.className} text-white text-center md:hidden lg:flex`}
-                        >
-                            Mi cuenta
-                        </span>
-                        <FaUser className="h-5 w-5 text-white" />
-                    </div>
+                    <AccountLink />
                     <CartIcon />
                     <CartPanel />
                 </section>

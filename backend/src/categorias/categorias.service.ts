@@ -3,7 +3,7 @@ import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Categoria } from './entities/categoria.entity';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { ValidationService } from 'src/services/validation.service';
 
 @Injectable()
@@ -28,8 +28,23 @@ export class CategoriasService {
     return this.CategoriesRepository.find();
   }
 
-  async findOne(id: number) {
-    const categoria = await this.CategoriesRepository.findOneBy({ id })
+  async findOne(id: number, productos?: string) {
+    const options: FindOneOptions<Categoria> = {
+      where: { id }
+    }
+
+    if (productos === 'true') {
+      options.relations = {
+        productos: true
+      },
+        options.order = {
+          productos: {
+            id: 'DESC'
+          }
+        }
+    }
+
+    const categoria = await this.CategoriesRepository.findOne(options)
     // si no existe ese id retorna:
     if (!categoria) {
       throw new NotFoundException(`La categoria con el id: ${id} no existe`)

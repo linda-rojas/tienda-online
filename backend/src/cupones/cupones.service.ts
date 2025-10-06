@@ -16,14 +16,7 @@ export class CuponesService {
 
   async create(createCuponeDto: CreateCuponeDto) {
     try {
-      await this.validationService.existsOrFail(
-        this.CuponesRepository,
-        'nombre',
-        createCuponeDto.nombre,
-        'El nombre del cupón ya está en uso'
-      );
-
-      return this.CuponesRepository.save(createCuponeDto);
+      return await this.CuponesRepository.save(createCuponeDto);
 
     } catch (error) {
       this.validationService.handleExceptions(error)
@@ -45,27 +38,10 @@ export class CuponesService {
 
   async update(id: number, updateCuponeDto: UpdateCuponeDto) {
     try {
-      const cuponExistente = await this.findOne(id);
+      const coupon = await this.findOne(id);
 
-      if (updateCuponeDto.nombre && updateCuponeDto.nombre !== cuponExistente.nombre) {
-        // console.log(updateProductoDto.nombre)
-        await this.validationService.existsOrFail(
-          this.CuponesRepository,
-          'nombre',
-          updateCuponeDto.nombre,
-          'El nombre del cupón ya está en uso'
-        );
-      }
-
-      const cupon = await this.CuponesRepository.preload({
-        id: id,
-        ...updateCuponeDto
-      });
-
-      if (!cupon) {
-        throw new NotFoundException(`El cupón con el id: ${id} no existe`);
-      }
-      return await this.CuponesRepository.save(cupon);
+      Object.assign(coupon, updateCuponeDto)
+      return await this.CuponesRepository.save(coupon);
 
     } catch (error) {
       this.validationService.handleExceptions(error);
@@ -73,9 +49,9 @@ export class CuponesService {
   }
 
   async remove(id: number) {
-    const cupon = await this.findOne(id);
-    await this.CuponesRepository.remove(cupon)
-    return { message: `cupon con el nombre: ${cupon.nombre} ha sido eliminado` };
+    const coupon = await this.findOne(id);
+    await this.CuponesRepository.remove(coupon)
+    return { message: `El cupon ha sido eliminado` };
   }
 
   async applyCupon(nombre: string) {

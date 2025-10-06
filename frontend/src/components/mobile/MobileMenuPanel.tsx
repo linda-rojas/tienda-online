@@ -4,6 +4,7 @@ import { IoClose } from 'react-icons/io5'
 import { useMenuToggle } from '@/hooks/useMenuToggle'
 import { Category } from '@/schemas/schemas'
 import { CategoryLinks } from '@/ui/mainNav/CategoryLinks'
+import AccountLink from '../ui/AccountLink'
 
 interface Props {
     categories: Category[]
@@ -48,6 +49,7 @@ export function MobileMenuPanel({ categories }: Props) {
                     <CategoryLinks categories={categories} variant="mobile" onClick={closeMenu} />
                 </div>
                 <div className="border-b border-gray-200"></div>
+                <AccountLink />
             </div>
 
             {/* Overlay */}

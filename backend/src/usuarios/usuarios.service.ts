@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,7 +11,7 @@ import { ValidationService } from 'src/services/validation.service';
 import { LoginUsuarioDto } from './dto/login-usuario.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-// import { PasswordResetService } from './services/password-reset.service';
+import { PasswordResetService } from './services/password-reset.service';
 
 @Injectable()
 export class UsuariosService {
@@ -21,14 +21,14 @@ export class UsuariosService {
     @InjectRepository(Direccione) private readonly direccioneRepository: Repository<Direccione>,
     @Inject(ValidationService) private readonly validationService: ValidationService,
     private readonly jwtService: JwtService,
-    // private readonly passwordResetService: PasswordResetService
+    private readonly passwordResetService: PasswordResetService
   ) { }
 
 
 
   // Crear usuario con direcciones
   async create(createUsuarioDto: CreateUsuarioDto): Promise<{ user: Usuario, token: string }> {
-    return this.createUserWithRole(createUsuarioDto, 'cliente');
+    return this.createUserWithRole(createUsuarioDto, 'usuario');
   }
 
   async createAdmin(createUsuarioDto: CreateUsuarioDto): Promise<{ user: Usuario, token: string }> {
@@ -96,11 +96,11 @@ export class UsuariosService {
     })
 
     if (!user) {
-      throw new NotFoundException(`Usuario con correo ${correo} no encontrado`);
+      throw new UnauthorizedException(`Usuario con correo ${correo} no encontrado`);
     }
 
     if (!bcrypt.compareSync(contraseña, user.contraseña)) {
-      throw new NotFoundException(`Contraseña incorrecta ${contraseña}`);
+      throw new UnauthorizedException(`Contraseña incorrecta ${contraseña}`);
     }
     return {
       ...user,
@@ -156,11 +156,11 @@ export class UsuariosService {
     return { user: savedUser, token };
   }
 
-  // async requestPasswordReset(correo: string) {
-  //   return this.passwordResetService.requestReset(correo);
-  // }
+  async requestPasswordReset(correo: string) {
+    return this.passwordResetService.requestReset(correo);
+  }
 
-  // async resetPassword(token: string, nuevaContraseña: string) {
-  //   return this.passwordResetService.resetPassword(token, nuevaContraseña);
-  // }
+  async resetPassword(token: string, nuevaContraseña: string) {
+    return this.passwordResetService.resetPassword(token, nuevaContraseña);
+  }
 }
