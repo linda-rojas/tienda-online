@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "next dev --turbopack",
+        "dev:ssl": "next dev --turbopack --experimental-https --experimental-https-cert ./node_modules/browser-sync/certs/server.crt --experimental-https-key ./node_modules/browser-sync/certs/server.key",
         "build": "next build --turbopack",
         "start": "next start",
         "lint": "eslint"
@@ -25,6 +26,7 @@
         "@types/node": "^20",
         "@types/react": "^19",
         "@types/react-dom": "^19",
+        "browser-sync": "^3.0.4",
         "eslint": "^9",
         "eslint-config-next": "15.5.4",
         "eslint-config-prettier": "^10.1.8",

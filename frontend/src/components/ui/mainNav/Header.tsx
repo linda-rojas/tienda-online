@@ -1,13 +1,14 @@
 import { FaSearch } from 'react-icons/fa'
 import { LogoAutocaucho } from './LogoAutoCaucho'
-import NavLinksServer from './NavLinksServer'
 import { CartIcon } from '@/components/cart/CartIcon'
 import { CartPanel } from '@/components/cart/CartPanel'
 import { NavLinksClient } from './NavLinksClient'
 import { MobileMenuPanel } from '@/components/mobile/MobileMenuPanel'
 import { MenuIcon } from '@/components/mobile/MenuIcon'
 import { Category } from '@/schemas/schemas'
-import AccountLink from '@/components/ui/AccountLink'
+import AccountLinkDesktop from '@/components/ui/AccountLinkDesktop'
+import NavLinksServer from '@/server/NavLinksServer'
+
 
 interface HeaderProps {
     categories: Category[]
@@ -34,7 +35,7 @@ export function Header({ categories }: HeaderProps) {
                     <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 underline" />
                 </div>
                 <section className="flex justify-center items-center gap-8 md:gap-3 lg:gap-8">
-                    <AccountLink />
+                    <AccountLinkDesktop />
                     <CartIcon />
                     <CartPanel />
                 </section>

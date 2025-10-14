@@ -1,5 +1,7 @@
+import FooterServer from '@/components/footer/foooterServer'
 import ProductCard from '@/components/products/productCards'
 import { CategoryWithProductsResponseSchema } from '@/schemas/schemas'
+import HeaderServer from '@/components/ui/mainNav/HeaderServer'
 import { redirect } from 'next/navigation'
 
 type Params = Promise<{ categoryId: string }>
@@ -25,10 +27,14 @@ export default async function StorePage({ params }: { params: Params }) {
     const category = await getProducts(categoryId)
 
     return (
-        <div className="grid place-items-center grid-cols-1 gap-5 sm:grid-cols-2  md:grid-cols-3 xl:grid-cols-4 my-10">
-            {category.productos.map((product) => (
-                <ProductCard key={product.id} product={product} />
-            ))}
+        <div>
+            <HeaderServer />
+            <div className="grid place-items-center grid-cols-1 gap-5 sm:grid-cols-2  md:grid-cols-3 xl:grid-cols-4 my-10">
+                {category.productos.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                ))}
+            </div>
+            <FooterServer />
         </div>
     )
 }

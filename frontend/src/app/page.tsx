@@ -1,13 +1,17 @@
-import OffersCarousel from '@/components/carousel/offersCarousel/offersCarousel'
+import OffersCarousel from '@/components/ui/carousel/offersCarousel'
 import FooterServer from '@/components/footer/foooterServer'
-import HeaderServer from '@/ui/mainNav/HeaderServer'
+import HeaderServer from '@/components/ui/mainNav/HeaderServer'
+import CategoryProductSoportes from '@/components/carousel/CategoryProductSoportes'
+import CategoryProductSuspension from '@/components/carousel/CategoryProductSuspension'
 
 export default function Home() {
     return (
         <>
-        <HeaderServer />
-        <OffersCarousel />
-        <FooterServer />
+            <HeaderServer />
+            <OffersCarousel />
+            <CategoryProductSoportes />
+            <CategoryProductSuspension />
+            <FooterServer />
         </>
     )
 }

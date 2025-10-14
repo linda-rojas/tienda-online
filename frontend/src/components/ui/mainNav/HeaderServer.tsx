@@ -1,4 +1,4 @@
-import { Header } from '@/ui/mainNav/Header'
+import { Header } from '@/components/ui/mainNav/Header'
 import { CategoriesResponseSchemas } from '@/schemas/schemas'
 
 export default async function HeaderServer() {

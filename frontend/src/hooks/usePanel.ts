@@ -1,4 +1,4 @@
-import { useTogglePanelStore } from '@/ui/toggleStore/toggleStore'
+import { useTogglePanelStore } from '@/components/ui/toggleStore/toggleStore'
 
 export const usePanel = (panelKey: string) => {
     const togglePanel = useTogglePanelStore((state) => state.togglePanel)

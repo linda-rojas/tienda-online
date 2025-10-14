@@ -2,7 +2,7 @@
 'use client'
 import { FaShoppingCart } from 'react-icons/fa'
 import { roboto } from '@/ui/fonts'
-import { useCartToggle } from '../../ui/cart/useCartToggle'
+import { useCartToggle } from '../ui/cart/useCartToggle'
 
 export function CartIcon() {
     const { toggleCart, cartCount } = useCartToggle()

@@ -1,4 +1,4 @@
-import { ProductSchema, Product, CategorySchema, Category } from '@/schemas/schemas'
+import { ProductSchema, Product, CategorySchema, Category, CategoryWithProductsResponseSchema } from '@/schemas/schemas'
 import { redirect } from 'next/navigation'
 
 export async function getProduct(productId: string): Promise<Product> {
@@ -19,4 +19,13 @@ export async function getCategory(categoryId: number): Promise<Category> {
 
     const json = await req.json()
     return CategorySchema.parse(json)
+}
+
+export async function getCategoryWithProducts(categoryId: number): Promise<Category> {
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/categorias/${categoryId}?productos=true`
+    const req = await fetch(url, { next: { tags: ['category-with-products'] } })
+    if (!req.ok) redirect('/no-encontrado')
+
+    const json = await req.json()
+    return CategoryWithProductsResponseSchema.parse(json)
 }

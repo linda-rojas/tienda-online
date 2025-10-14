@@ -1,5 +1,5 @@
 'use client'
-import { useTogglePanelStore } from "@/ui/toggleStore/toggleStore"
+import { useTogglePanelStore } from "@/components/ui/toggleStore/toggleStore"
 
 export const useMenuToggle = () => {
     const isOpen = useTogglePanelStore((state) => state.isPanelOpen('menu'))

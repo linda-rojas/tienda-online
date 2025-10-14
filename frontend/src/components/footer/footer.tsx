@@ -28,10 +28,10 @@ export default function Footer({ categories }: Props) {
     const pathname = usePathname()
     return (
         <footer className="w-full bg-gray-200 text-gray-800">
-            <div className="max-w-7xl mx-auto py-10 px-6 grid grid-cols-1 md:grid-cols-3  lg:grid-cols-4 gap-10 text-center place-items-center">
+            <div className="max-w-7xl mx-auto py-10 px-12 lg:px-6 grid grid-cols-2 md:grid-cols-3  lg:grid-cols-4 gap-10 text-center place-items-center">
                 <div>
                     <h3 className="text-lg font-bold text-blue-500 mb-4 text-justify">Sobre nosotros</h3>
-                    <ul className="space-y-2 flex flex-col text-justify">
+                    <ul className="space-y-2 flex flex-col text-left">
                         {nosotros.map((item) => (
                             <li key={item.name}>
                                 <Link href={item.link} className="cursor-pointer hover:font-bold">
@@ -44,7 +44,7 @@ export default function Footer({ categories }: Props) {
 
                 <div>
                     <h3 className="text-lg font-bold text-blue-500 mb-4 text-justify">Enlaces rápidos</h3>
-                    <ul className="space-y-2 text-justify">
+                    <ul className="space-y-2 text-justify mb-10 sm:mb-0 lg:mb-0">
                         {categories.map((category) => {
                             const isActive = pathname === `/${category.id}`
                             return(
@@ -58,7 +58,7 @@ export default function Footer({ categories }: Props) {
 
                 {/* Columna 3 - Contacto */}
                 <div>
-                    <h3 className="text-lg font-bold text-blue-500 mb-4 text-justify">
+                    <h3 className="text-lg font-bold text-blue-500 mb-4 text-left">
                         Información de contacto
                     </h3>
                     <div className="flex flex-col justify-center text-center">

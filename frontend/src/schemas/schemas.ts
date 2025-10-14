@@ -15,7 +15,8 @@ export const ProductSchema = z.object({
 
 export const CategorySchema = z.object({
     id: z.coerce.number(),
-    nombre: z.string()
+    nombre: z.string(),
+    productos: z.array(ProductSchema).optional()
 })
 
 export const CategoriesResponseSchemas = z.array(CategorySchema)
@@ -62,7 +63,8 @@ const OrderContentSchema = z.object({
 export const OrderSchema = z.object({
     total: z.number(),
     cupon: z.string(),
-    contents: z.array(OrderContentSchema).min(1, { message: 'El Carrito no puede ir vacio' })
+    contents: z.array(OrderContentSchema).min(1, { message: 'El Carrito no puede ir vacio' }),
+    usuarioId: z.number()
 })
 
 export const SuccessResponseSchema = z.object({
@@ -74,6 +76,21 @@ export const ErrorResponseSchema = z.object({
     statusCode: z.number()
 })
 
+export const RoleSchema = z.object({
+    id: z.coerce.number(),
+    nombre: z.string(),
+});
+
+export const UserSchema = z.object({
+    id: z.coerce.number(),
+    nombre: z.string(),
+    apellidos: z.string(),
+    celular: z.string(),
+    correo: z.string().email(),
+    contrasena: z.string(),
+    role: RoleSchema,
+});
+
 export type Product = z.infer<typeof ProductSchema>
 export type Category = z.infer<typeof CategorySchema>
 export type ShoppingCart = z.infer<typeof ShoppingCartSchema>
@@ -81,4 +98,6 @@ export type CartItem = z.infer<typeof ShoppingCartContentsSchema>
 // export type Coupon = z.infer<typeof CouponResponseSuccessSchema | typeof CouponResponseErrorSchema>
 
 export type Coupon = z.infer<typeof CouponResponseSchema>
+
+export type User = z.infer<typeof UserSchema>;
 

@@ -1,9 +1,9 @@
 'use client'
 import { useEffect } from 'react'
-import { useCartToggle } from '../../ui/cart/useCartToggle'
+import { useCartToggle } from '../ui/cart/useCartToggle'
 import { useStore } from '@/useStore'
 import ShoppingCartItem from './ShopingCartItem'
-import Amount from '@/ui/cart/Amount'
+import Amount from '@/components/ui/cart/Amount'
 import CouponForm from './CouponForm'
 import SubmitOrderForm from './SubmitOrderForm'
 

@@ -1,9 +1,12 @@
 import type { Metadata } from 'next'
-import '../ui/globals.css'
-import { montserrat, roboto } from '../ui/fonts'
-import HeaderServer from '@/components/ui/mainNav/HeaderServer'
-import FooterServer from '@/components/footer/foooterServer'
-import ToastNotification from '@/ui/ToastNotification'
+import { montserrat, roboto } from '../../../ui/fonts'
+import { Nav } from '@/components/ui/mainNav/Nav';
+import FooterServer from '@/components/footer/foooterServer';
+
+interface Category {
+    id: number;
+    nombre: string;
+}
 
 export const metadata: Metadata = {
     title: 'Create Next App',
@@ -12,15 +15,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
     children,
+    categories,
 }: Readonly<{
-    children: React.ReactNode
+    children: React.ReactNode;
+    categories: Category[];
 }>) {
     return (
         <html lang="en">
             <body className={`${roboto} ${montserrat} antialiased`}>
+                <Nav categories={categories} />
                 <main>{children}</main>
-                {/* <HeaderServer /> */}
-                <ToastNotification />
+                <FooterServer />
             </body>
         </html>
     )

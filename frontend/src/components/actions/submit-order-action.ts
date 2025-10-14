@@ -4,6 +4,7 @@ import { revalidatePath, revalidateTag } from "next/cache"
 
 export async function submitOrder(data: unknown) {
 	const order = OrderSchema.parse(data)
+	console.log('Submitting order:', order);
 	const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/transacciones`
 	const req = await fetch(url, {
 		method: 'POST',
