@@ -5,5 +5,5 @@ export interface UserInterface {
     apellidos: string;
     celular: string;
     correo: string;
-    contraseña: string;
+    contrasena: string;
 }

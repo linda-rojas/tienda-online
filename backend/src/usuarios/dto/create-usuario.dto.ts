@@ -37,7 +37,7 @@ export class CreateUsuarioDto implements UserInterface {
         message: 'La contraseña debe tener una letra mayúscula, una minúscula y un número.'
     })
     @IsDefined({ message: "El campo contraseña es obligatorio" })
-    contraseña: string;
+    contrasena: string;
 
     @IsArray({ message: 'Debes enviar un arreglo de direcciones' })
     @ArrayNotEmpty({ message: 'Debes incluir una dirección' })

@@ -1,6 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TransactionInterface } from "../interfaces/transaction.interface";
 import { TransaccionContenidos } from "./transaccion-contenidos.entity";
+import { Usuario } from "src/usuarios/entities/usuario.entity";
 
 @Entity({ name: 'transacciones' })
 export class Transaccion implements TransactionInterface {
@@ -18,6 +19,9 @@ export class Transaccion implements TransactionInterface {
 
     @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
     transaccionDate: Date
+
+    @ManyToOne(() => Usuario, (usuario) => usuario.transacciones)
+    usuario: Usuario;
 
     @OneToMany(() => TransaccionContenidos, (transaccion) => transaccion.transaccion)
     contents: TransaccionContenidos[]

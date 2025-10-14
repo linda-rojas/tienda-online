@@ -8,6 +8,7 @@ import { ValidationService } from 'src/services/validation.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Producto, Categoria])],
+  exports: [TypeOrmModule],
   controllers: [ProductosController],
   providers: [ProductosService, ValidationService],
 })

@@ -7,6 +7,7 @@ import { Producto } from '../productos/entities/producto.entity';
 import { endOfDay, isValid, parseISO, startOfDay } from 'date-fns';
 import { CuponesService } from '../cupones/cupones.service';
 import { TransaccionContenidos } from './entities/transaccion-contenidos.entity';
+import { Usuario } from 'src/usuarios/entities/usuario.entity';
 
 @Injectable()
 export class TransaccionsService {
@@ -21,9 +22,17 @@ export class TransaccionsService {
   async create(createTransaccionDto: CreateTransaccionDto) {
 
     await this.productosRepository.manager.transaction(async (transactionEntityManager) => {
+      const errors: string[] = [];
+      const usuarioId = createTransaccionDto.usuarioId;
+      const usuario = await transactionEntityManager.findOneBy(Usuario, { id: usuarioId })
+      if (!usuario) {
+        errors.push(`usuario con id: ${usuarioId} no fue encontrado`)
+        throw new NotFoundException(errors);
+      }
       const transaccion = new Transaccion()
       const total = createTransaccionDto.contents.reduce((total, item) => total + (item.cantidad * item.precio), 0)
       transaccion.total = total
+      transaccion.usuario = usuario
 
       if (createTransaccionDto.cupon) {
         const coupon = await this.couponService.applyCupon(createTransaccionDto.cupon)
@@ -67,7 +76,8 @@ export class TransaccionsService {
   findAll(transacciondate?: string) {
     const options: FindManyOptions<Transaccion> = {
       relations: {
-        contents: true
+        contents: true,
+        usuario: true
       }
     }
 
@@ -96,9 +106,7 @@ export class TransaccionsService {
       where: {
         id
       },
-      relations: {
-        contents: true
-      }
+      relations: ['contents', 'usuario'],
     })
 
     if (!transaction) {

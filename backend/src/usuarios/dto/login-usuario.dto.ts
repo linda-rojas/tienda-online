@@ -13,5 +13,5 @@ export class LoginUsuarioDto {
         message: 'La contraseña debe tener una letra mayúscula, una minúscula y un número.'
     })
     @IsDefined({ message: "El campo contraseña es obligatorio" })
-    contraseña: string;
+    contrasena: string;
 }

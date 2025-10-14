@@ -35,7 +35,7 @@ export class PasswordResetService {
         return responseText;
     }
 
-    async resetPassword(token: string, nuevaContraseña: string): Promise<string> {
+    async resetPassword(token: string, nuevaContrasena: string): Promise<string> {
         try {
             const payload = this.jwtService.verify(token, {
                 secret: process.env.JWT_RESET_SECRET,
@@ -44,7 +44,7 @@ export class PasswordResetService {
             const user = await this.usuarioRepository.findOneBy({ id: payload.id });
             if (!user) throw new NotFoundException('Usuario no encontrado');
 
-            user.contraseña = await bcrypt.hash(nuevaContraseña, 10);
+            user.contrasena = await bcrypt.hash(nuevaContrasena, 10);
             await this.usuarioRepository.save(user);
 
             return 'Contraseña actualizada correctamente';

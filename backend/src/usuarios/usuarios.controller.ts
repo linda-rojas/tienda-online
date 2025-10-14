@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpCode, HttpStatus } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
@@ -53,11 +53,12 @@ export class UsuariosController {
 
   @Patch('restablecer-contrasena')
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-    return this.usuariosService.resetPassword(resetPasswordDto.token, resetPasswordDto.nuevaContraseña);
+    return this.usuariosService.resetPassword(resetPasswordDto.token, resetPasswordDto.nuevaContrasena);
   }
 
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   loginUser(@Body() loginUsuarioDto: LoginUsuarioDto) {
     return this.usuariosService.login(loginUsuarioDto);
   }

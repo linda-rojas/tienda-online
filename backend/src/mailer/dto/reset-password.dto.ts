@@ -10,5 +10,5 @@ export class ResetPasswordDto {
         message: 'La nuevaContraseña debe tener una letra mayúscula, una minúscula y un número.'
     })
     @IsDefined({ message: "El campo nuevaContraseña es obligatorio" })
-    nuevaContraseña: string;
+    nuevaContrasena: string;
 }

@@ -30,5 +30,5 @@ export class UpdateUsuarioDto extends PartialType(CreateUsuarioDto) {
         message: 'La contraseña debe tener una letra mayúscula, una minúscula y un número.'
     })
     @IsOptional()
-    contraseña?: string;
+    contrasena?: string;
 }

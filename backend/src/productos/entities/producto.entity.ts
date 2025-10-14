@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ProductInterface } from "../interfaces/product.interface";
 import { Categoria } from "../../categorias/entities/categoria.entity";
+import { Usuario } from "src/usuarios/entities/usuario.entity";
 
 @Entity({ name: 'productos' })
 export class Producto implements ProductInterface {
@@ -37,5 +38,12 @@ export class Producto implements ProductInterface {
     @ManyToOne(() => Categoria)
     @JoinColumn({ name: "categoriaId" })
     categoria: Categoria;
+
+    @Column({ type: 'int', nullable: true })
+    usuarioId: number;
+
+    @ManyToOne(() => Usuario, (usuario) => usuario.productos)
+    @JoinColumn({ name: 'usuarioId' })
+    usuario: Usuario; // Relación con Usuario
 }
 

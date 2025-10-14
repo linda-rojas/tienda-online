@@ -1,17 +1,20 @@
 import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Usuario } from './entities/usuario.entity';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Transaccion } from 'src/transaccions/entities/transaccion.entity';
+import { Usuario } from './entities/usuario.entity';
 import { Role } from '../roles/entities/role.entity';
 import { Direccione } from 'src/direcciones/entities/direccione.entity';
-import { ValidationService } from 'src/services/validation.service';
+import { TransaccionContenidos } from 'src/transaccions/entities/transaccion-contenidos.entity';
+import { CreateUsuarioDto } from './dto/create-usuario.dto';
+import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { LoginUsuarioDto } from './dto/login-usuario.dto';
+import { ValidationService } from 'src/services/validation.service';
+import { PasswordResetService } from './services/password-reset.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { PasswordResetService } from './services/password-reset.service';
+import { comparePasswords, hashPassword } from 'src/auth/bycript.util';
+import { Producto } from 'src/productos/entities/producto.entity';
 
 @Injectable()
 export class UsuariosService {
@@ -19,6 +22,8 @@ export class UsuariosService {
     @InjectRepository(Usuario) private readonly usuarioRepository: Repository<Usuario>,
     @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
     @InjectRepository(Direccione) private readonly direccioneRepository: Repository<Direccione>,
+    @InjectRepository(Producto) private readonly productoRepository: Repository<Producto>,
+    @InjectRepository(Transaccion) private readonly transaccionRepository: Repository<Transaccion>,
     @Inject(ValidationService) private readonly validationService: ValidationService,
     private readonly jwtService: JwtService,
     private readonly passwordResetService: PasswordResetService
@@ -69,6 +74,10 @@ export class UsuariosService {
       );
 
     }
+    if (updateUsuarioDto.contrasena) {
+      updateUsuarioDto.contrasena = await hashPassword(updateUsuarioDto.contrasena);
+    }
+
 
     const usuario = await this.usuarioRepository.preload({
       id: id,
@@ -78,6 +87,7 @@ export class UsuariosService {
     if (!usuario) {
       throw new NotFoundException(`El usuario con el id: ${id} no fue encontrado`)
     }
+
     return await this.usuarioRepository.save(usuario);
   }
 
@@ -88,10 +98,10 @@ export class UsuariosService {
   }
 
   async login(loginUsuarioDto: LoginUsuarioDto) {
-    const { correo, contraseña } = loginUsuarioDto
+    const { correo, contrasena } = loginUsuarioDto
     const user = await this.usuarioRepository.findOne({
       where: { correo },
-      select: { correo: true, contraseña: true, id: true },
+      select: { correo: true, contrasena: true, id: true },
       relations: { role: true }
     })
 
@@ -99,9 +109,10 @@ export class UsuariosService {
       throw new UnauthorizedException(`Usuario con correo ${correo} no encontrado`);
     }
 
-    if (!bcrypt.compareSync(contraseña, user.contraseña)) {
-      throw new UnauthorizedException(`Contraseña incorrecta ${contraseña}`);
+    if (!(await comparePasswords(contrasena, user.contrasena))) {
+      throw new UnauthorizedException(`Contraseña incorrecta`);
     }
+
     return {
       ...user,
       token: this.getJwtToken({
@@ -134,11 +145,11 @@ export class UsuariosService {
       throw new NotFoundException(`El rol "${roleName}" no existe`);
     }
 
-    const hashedPassword = await bcrypt.hash(dto.contraseña, 10);
+    const hashedPassword = await hashPassword(dto.contrasena);
 
     const newUser = this.usuarioRepository.create({
       ...userData,
-      contraseña: hashedPassword,
+      contrasena: hashedPassword,
       role,
     });
 
@@ -160,7 +171,54 @@ export class UsuariosService {
     return this.passwordResetService.requestReset(correo);
   }
 
-  async resetPassword(token: string, nuevaContraseña: string) {
-    return this.passwordResetService.resetPassword(token, nuevaContraseña);
+  async resetPassword(token: string, nuevaContrasena: string) {
+    const hashed = await hashPassword(nuevaContrasena);
+    return this.passwordResetService.resetPassword(token, hashed);
   }
+
+  // En UsuariosService
+  async realizarCompra(usuarioId: number, productos: { productoId: number; cantidad: number }[]): Promise<Transaccion> {
+    // Buscar usuario
+    const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
+
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${usuarioId} no encontrado`);
+    }
+
+    // Crear la transacción (compra)
+    const nuevaTransaccion = new Transaccion();
+    nuevaTransaccion.usuario = usuario; // Asociar el usuario a la compra
+    nuevaTransaccion.total = 0; // Inicializar el total
+
+    // Crear el contenido de la transacción (productos comprados)
+    const contenidos: TransaccionContenidos[] = [];
+
+    for (const { productoId, cantidad } of productos) {
+      // Buscar el producto
+      const producto = await this.productoRepository.findOne({ where: { id: productoId } });
+
+      if (!producto) {
+        throw new NotFoundException(`Producto con ID ${productoId} no encontrado`);
+      }
+
+      // Crear el contenido de la transacción (por cada producto)
+      const contenido = new TransaccionContenidos();
+      contenido.producto = producto;
+      contenido.cantidad = cantidad;
+      contenido.precio = producto.precio * cantidad; // Calcular el precio total de este producto
+      contenidos.push(contenido);
+
+      // Sumar el precio al total de la transacción
+      nuevaTransaccion.total += contenido.precio;
+    }
+
+    // Asignar los contenidos de la transacción
+    nuevaTransaccion.contents = contenidos;
+
+    // Guardar la nueva transacción (compra)
+    await this.transaccionRepository.save(nuevaTransaccion);
+
+    return nuevaTransaccion; // Devolver la transacción creada
+  }
+
 }

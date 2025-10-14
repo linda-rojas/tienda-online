@@ -2,6 +2,8 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 import { UserInterface } from "../interfaces/user.interface";
 import { Direccione } from "../../direcciones/entities/direccione.entity";
 import { Role } from "../../roles/entities/role.entity";
+import { Transaccion } from "src/transaccions/entities/transaccion.entity";
+import { Producto } from "src/productos/entities/producto.entity";
 
 @Entity({ name: 'usuarios' })
 export class Usuario implements UserInterface {
@@ -21,7 +23,7 @@ export class Usuario implements UserInterface {
   correo: string;
 
   @Column({ type: 'text', nullable: false, select: false })
-  contraseña: string;
+  contrasena: string;
 
   @OneToMany(() => Direccione, (direccion) => direccion.usuario, { cascade: true })
   direcciones: Direccione[];
@@ -29,4 +31,9 @@ export class Usuario implements UserInterface {
   @ManyToOne(() => Role, (role) => role.usuarios, { cascade: true })
   role: Role;
 
+  @OneToMany(() => Transaccion, (transaccion) => transaccion.usuario)
+  transacciones: Transaccion[]; // Relación con las transacciones del usuario
+
+  @OneToMany(() => Producto, (producto) => producto.usuario)
+  productos: Producto[]; // Relación inversa con Producto
 }

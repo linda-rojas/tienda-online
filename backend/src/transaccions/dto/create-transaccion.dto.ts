@@ -29,4 +29,8 @@ export class CreateTransaccionDto {
   @ValidateNested()
   @Type(() => TransactionContentsDto)
   contents: TransactionContentsDto[]
+
+  @IsNumber({}, { message: 'usuarioId debe ser un número' })
+  @Type(() => Number)
+  usuarioId: number;
 }
