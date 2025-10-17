@@ -5,6 +5,7 @@ import { Transaccion } from 'src/transaccions/entities/transaccion.entity';
 import { Usuario } from './entities/usuario.entity';
 import { Role } from '../roles/entities/role.entity';
 import { Direccione } from 'src/direcciones/entities/direccione.entity';
+import { Producto } from 'src/productos/entities/producto.entity';
 import { TransaccionContenidos } from 'src/transaccions/entities/transaccion-contenidos.entity';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
@@ -14,7 +15,6 @@ import { PasswordResetService } from './services/password-reset.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { comparePasswords, hashPassword } from 'src/auth/bycript.util';
-import { Producto } from 'src/productos/entities/producto.entity';
 
 @Injectable()
 export class UsuariosService {
@@ -29,21 +29,19 @@ export class UsuariosService {
     private readonly passwordResetService: PasswordResetService
   ) { }
 
-
-
   // Crear usuario con direcciones
-  async create(createUsuarioDto: CreateUsuarioDto): Promise<{ user: Usuario, token: string }> {
+  async create(createUsuarioDto: CreateUsuarioDto): Promise<{ message: string, user: Usuario, token: string }> {
     return this.createUserWithRole(createUsuarioDto, 'usuario');
   }
 
-  async createAdmin(createUsuarioDto: CreateUsuarioDto): Promise<{ user: Usuario, token: string }> {
+  async createAdmin(createUsuarioDto: CreateUsuarioDto): Promise<{ message: string, user: Usuario, token: string }> {
     return this.createUserWithRole(createUsuarioDto, 'administrador');
   }
 
 
   async findAll(): Promise<Usuario[]> {
     return await this.usuarioRepository.find({
-      relations: ['role'],
+      relations: ['role', 'direcciones'],
     });
   }
 
@@ -130,7 +128,7 @@ export class UsuariosService {
   private async createUserWithRole(
     dto: CreateUsuarioDto,
     roleName: string
-  ): Promise<{ user: Usuario, token: string }> {
+  ): Promise<{ message: string, user: Usuario, token: string }> {
     const { direcciones, ...userData } = dto;
 
     await this.validationService.existsOrFail(
@@ -164,7 +162,7 @@ export class UsuariosService {
 
     const token = this.getJwtToken({ id: savedUser.id, role: role.nombre });
 
-    return { user: savedUser, token };
+    return { user: savedUser, token, message: 'Usuario creado exitosamente' };
   }
 
   async requestPasswordReset(correo: string) {
@@ -174,6 +172,12 @@ export class UsuariosService {
   async resetPassword(token: string, nuevaContrasena: string) {
     const hashed = await hashPassword(nuevaContrasena);
     return this.passwordResetService.resetPassword(token, hashed);
+  }
+
+  // verificar correo
+  async checkEmail(correo: string) {
+    const user = await this.usuarioRepository.findOne({ where: { correo } });
+    return { exists: !!user };
   }
 
   // En UsuariosService

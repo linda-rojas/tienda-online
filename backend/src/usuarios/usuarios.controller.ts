@@ -34,6 +34,12 @@ export class UsuariosController {
     return this.usuariosService.remove(id);
   }
 
+  // verificar correo
+  @Get('check-email/:correo')
+  async checkEmail(@Param('correo') correo: string) {
+    return this.usuariosService.checkEmail(correo);
+  }
+
   @Get('validation-phone/:celular')
   validationPhone(@Param('celular', PhoneValidationPipe) celular: string) {
     return `Número válido: ${celular}`;

@@ -57,7 +57,7 @@ export function MobileMenuPanel({ categories }: Props) {
                 </div>
                 <div className="border-b border-gray-200"></div>
                 <div className=' max-w-fit ml-7 mt-5 p-3 border-gray-300 border-2 rounded-lg bg-gray-200'>
-                    <AccountLinkMobile />
+                    <AccountLinkMobile closeMenu={closeMenu} />
                 </div>
             </div>
 

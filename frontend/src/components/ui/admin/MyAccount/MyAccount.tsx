@@ -23,34 +23,38 @@ const MyAccount = () => {
     const fetchUsuarioData = async () => {
       try {
         const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
-        console.log('Usuario desde localStorage:', usuario);
-
+        // Si no hay usuario en el localStorage, redirige al login
         if (!usuario || !usuario.id) {
-          setIsLoading(false);
+          window.location.href = '/admin/login';
           return;
         }
 
+        // Si el rol es administrador, redirige al panel de administración
+        const role = typeof usuario.role === 'string'
+          ? usuario.role.toLowerCase()
+          : usuario.role?.nombre?.toLowerCase();
+
+        if (role === 'administrador') {
+          window.location.href = '/admin/sales';
+          return;
+        }
+
+        // Si es un usuario normal, continua con la carga de datos
         const response = await fetch(`${API_URL}/usuarios/${usuario.id}`);
         const data = await response.json();
 
         if (response.ok) {
           setUsuarioData(data);
-          // Obtener todas las transacciones
           const resTransacciones = await fetch(`${API_URL}/transacciones`);
           const dataTransacciones = await resTransacciones.json();
-
-          // Filtrar solo las transacciones del usuario actual
           const transaccionesDelUsuario = dataTransacciones.filter(
             (t: any) => t.usuario?.id === usuario.id
           );
-
           setTransacciones(transaccionesDelUsuario);
         } else {
           toast.error('Error al cargar los datos del usuario', {
             position: 'top-right',
             autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
           });
         }
       } catch (error) {
@@ -58,8 +62,6 @@ const MyAccount = () => {
         toast.error('Hubo un problema al cargar los datos del usuario', {
           position: 'top-right',
           autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
         });
       } finally {
         setIsLoading(false);
@@ -68,6 +70,7 @@ const MyAccount = () => {
 
     fetchUsuarioData();
   }, []);
+
 
   if (isLoading) {
     return <div>Cargando...</div>;
@@ -119,6 +122,9 @@ const MyAccount = () => {
             className="bg-red-700 hover:bg-red-800 text-white font-medium sm:font-semibold lg:font-semibold py-2 px-2 lg:px-4 rounded-lg text-[14px] sm:text-[16px] lg:text-[17px]"
             onClick={() => {
               localStorage.removeItem("usuario");
+              localStorage.removeItem("token");
+              document.cookie = "token=; Max-Age=0; path=/";
+              document.cookie = "role=; Max-Age=0; path=/";
             }}
           >
             Cerrar sesión
@@ -154,19 +160,19 @@ const MyAccount = () => {
                 <div key={index} className="flex flex-col gap-3 mb-4 border-1 border-[#023D71] p-4 rounded-lg bg-gray-50 shadow text-gray-700">
                   <p className='flex flex-col justify-between'>
                     <strong className='font-semibold text-[14px] sm:text-[16px] lg:text-[17px]'>Dirección:</strong>
-                    <p className='ml-3 text-[14px] sm:text-[15px] lg:text-[16px]'>{direccion.direccion}</p>
+                    <span className='ml-3 text-[14px] sm:text-[15px] lg:text-[16px]'>{direccion.direccion}</span>
                   </p>
                   <p className='flex flex-col justify-between'>
                     <strong className='font-semibold text-[14px] sm:text-[16px] lg:text-[17px]'>Ciudad:</strong>
-                    <p className='ml-3 text-[14px] sm:text-[15px] lg:text-[16px]'>{direccion.ciudad}</p>
+                    <span className='ml-3 text-[14px] sm:text-[15px] lg:text-[16px]'>{direccion.ciudad}</span>
                   </p>
                   <p className='flex flex-col justify-between'>
                     <strong className='font-semibold text-[14px] sm:text-[16px] lg:text-[17px]'>Departamento:</strong>
-                    <p className='ml-3 text-[14px] sm:text-[15px] lg:text-[16px]'>{direccion.departamento}</p>
+                    <span className='ml-3 text-[14px] sm:text-[15px] lg:text-[16px]'>{direccion.departamento}</span>
                   </p>
                   <p className='flex flex-col justify-between'>
                     <strong className='font-semibold text-[14px] sm:text-[16px] lg:text-[17px]'>Celular:</strong>
-                    <p className='ml-3 text-[14px] sm:text-[15px] lg:text-[16px]'>{direccion.celular}</p>
+                    <span className='ml-3 text-[14px] sm:text-[15px] lg:text-[16px]'>{direccion.celular}</span>
                   </p>
                 </div>
               ))}

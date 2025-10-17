@@ -16,9 +16,70 @@ const LoginForm = () => {
 
   useEffect(() => {
     setIsClient(true);
-    const user = localStorage.getItem('usuario');
-    if (user) {
-      window.location.href = '/admin/my-acount';
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get('expired') === 'true') {
+      toast.warning('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.', {
+        position: 'top-right',
+        autoClose: 4000,
+      });
+    }
+
+    if (params.get('unauthorized') === 'true') {
+      toast.error('No tienes permiso para acceder a esta sección.', {
+        position: 'top-right',
+        autoClose: 4000,
+      });
+    }
+
+    const storedUser = localStorage.getItem('usuario');
+    const token = localStorage.getItem('token');
+
+    // 🚨 Si no hay token o usuario → no redirigir (mostrar login)
+    if (!storedUser || !token) return;
+
+    // ✅ Verificar si el token está expirado antes de redirigir
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expMs = payload.exp * 1000;
+      const isExpired = Date.now() > expMs;
+
+      if (isExpired) {
+        localStorage.removeItem('usuario');
+        localStorage.removeItem('token');
+        return;
+      }
+
+      // Extraer rol correctamente
+      const parsedUser = JSON.parse(storedUser);
+      const role =
+        typeof parsedUser.role === 'string'
+          ? parsedUser.role.toLowerCase()
+          : parsedUser.role?.nombre?.toLowerCase();
+
+      // ✅ Redirigir según el rol
+      if (role === 'administrador') {
+        toast.success('Bienvenido administrador 👑', {
+          onClose: () => {
+            setTimeout(() => {
+              window.location.href = '/admin/sales'; // Redirigir a /admin/sales
+            }, 800);
+          },
+        });
+      } else {
+        toast.success('Bienvenido, serás redirigido a la tienda 🛍️', {
+          onClose: () => {
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 800);
+          },
+        });
+      }
+    } catch (err) {
+      console.error('Error validando token:', err);
+      localStorage.removeItem('usuario');
+      localStorage.removeItem('token');
     }
   }, []);
 
@@ -39,23 +100,48 @@ const LoginForm = () => {
 
     const { success, data, error } = await loginUser(email, password);
 
-    if (success) {
-      setUserData(data);
+    if (!success) {
+      if (error === 'Usuario con correo no encontrado') {
+        toast.error('El correo electrónico no está registrado.');
+      } else if (error === 'Contraseña incorrecta') {
+        toast.error('La contraseña es incorrecta.');
+      } else {
+        toast.error('Hubo un error en el proceso de inicio de sesión.');
+      }
+      return;
+    }
+
+    if (data) {
       localStorage.setItem('usuario', JSON.stringify(data));
-      toast.success('Bienvenido, serás redirigido a la tienda', {
-        onClose: () => {
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 1000);
-        },
-      });
-    } else {
-      toast.error(error || 'Error en el login', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-      });
+      localStorage.setItem('token', data.token);
+      setUserData(data);
+
+      // 🧠 NUEVO: guardar también en cookies (middleware las usa)
+      document.cookie = `token=${data.token}; path=/; max-age=3600;`; // 1 hora
+      const role =
+        typeof data.role === 'string'
+          ? data.role.toLowerCase()
+          : data.role?.nombre?.toLowerCase();
+      document.cookie = `role=${role}; path=/; max-age=3600;`;
+
+      // Redirección igual que antes
+      if (role === 'administrador') {
+        toast.success('Bienvenido administrador 👑', {
+          onClose: () => {
+            setTimeout(() => {
+              window.location.href = '/admin/sales'; // Redirigir a /admin/sales
+            }, 800);
+          },
+        });
+      } else {
+        toast.success('Bienvenido, serás redirigido a la tienda 🛍️', {
+          onClose: () => {
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 800);
+          },
+        });
+      }
     }
   };
 
@@ -66,32 +152,52 @@ const LoginForm = () => {
   return (
     <div className="flex justify-center p-4 items-center m-6 bg-gray-100">
       <div className="w-full max-w-lg p-4 sm:p-8 lg:p-8 bg-white shadow-xl rounded-lg">
-        <h2 className="text-[20px] sm:text-2xl lg:text-3xl font-bold text-center mb-6 text-gray-600">Iniciar sesión</h2>
+        <h2 className="text-[20px] sm:text-2xl lg:text-3xl font-bold text-center mb-6 text-gray-600">
+          Iniciar sesión
+        </h2>
+
         <form onSubmit={handleSubmit} className="space-y-2 lg:space-y-6">
           <div>
-            <label htmlFor="email" className="block text-[14px] sm:text-[17px] font-semibold text-gray-500">Correo electrónico</label>
+            <label
+              htmlFor="email"
+              className="block text-[14px] sm:text-[17px] font-semibold text-gray-500"
+            >
+              Correo electrónico
+            </label>
             <input
               type="email"
               id="email"
-              className={`w-full p-2 border text-gray-500 ${emailError ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+              className={`w-full p-2 border text-gray-500 ${emailError ? 'border-red-500' : 'border-gray-300'
+                } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none`}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            {emailError && <div className="text-red-500 text-sm mt-1">{emailError}</div>}
+            {emailError && (
+              <div className="text-red-500 text-sm mt-1">{emailError}</div>
+            )}
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-[14px] sm:text-[17px] font-semibold text-gray-500">Contraseña</label>
+            <label
+              htmlFor="password"
+              className="block text-[14px] sm:text-[17px] font-semibold text-gray-500"
+            >
+              Contraseña
+            </label>
             <input
               type="password"
               id="password"
-              className={`w-full p-2 border text-gray-500 ${passwordError ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+              autoComplete="current-password"
+              className={`w-full p-2 border text-gray-500 ${passwordError ? 'border-red-500' : 'border-gray-300'
+                } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none`}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            {passwordError && <div className="text-red-500 text-sm mt-1">{passwordError}</div>}
+            {passwordError && (
+              <div className="text-red-500 text-sm mt-1">{passwordError}</div>
+            )}
           </div>
 
           <div className="w-full flex items-center justify-around mt-6 lg:mt-0">
@@ -113,13 +219,19 @@ const LoginForm = () => {
         </form>
 
         <div className="mt-6 text-center">
-          <Link href="/registro" className="text-gray-500 hover:text-gray-600 text-[14px] sm:text-[16px] font-semibold">
+          <Link
+            href="/admin/register"
+            className="text-gray-500 hover:text-gray-600 text-[14px] sm:text-[16px] font-semibold"
+          >
             ¿Aún no estás registrado? Regístrate
           </Link>
         </div>
 
         <div className="mt-2 text-center">
-          <Link href="/recuperar" className="text-gray-500 hover:text-gray-600 text-[14px] sm:text-[16px] font-semibold">
+          <Link
+            href="/"
+            className="text-gray-500 hover:text-gray-600 text-[14px] sm:text-[16px] font-semibold"
+          >
             ¿Olvidaste tu contraseña?
           </Link>
         </div>
