@@ -167,6 +167,7 @@ const LoginForm = () => {
             <input
               type="email"
               id="email"
+              autoComplete='email'
               className={`w-full p-2 border text-gray-500 ${emailError ? 'border-red-500' : 'border-gray-300'
                 } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none`}
               value={email}

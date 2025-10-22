@@ -18,6 +18,11 @@ export const ProductSchema = z.object({
     categoriaId: z.coerce.number()
 })
 
+export const ProductResponseSchema = z.object({
+    products: z.array(ProductSchema),
+    total: z.number()
+})
+
 export const CategorySchema = z.object({
     id: z.coerce.number(),
     nombre: z.string(),
@@ -156,6 +161,25 @@ export const UserRegisterSchema = z.object({
 })
 
 // ===============================
+// 🧾 TRANSACCIONES
+// ===============================
+export const ContentsSchema = z.object({
+    id: z.number(),
+    cantidad: z.number(),
+    precio: z.string(),
+    producto: ProductSchema
+})
+export const TransactionResponseSchema = z.object({
+    id: z.number(),
+    total: z.string(),
+    cupon: z.string().nullable(),
+    descuento: z.string(),
+    transaccionDate: z.string(),
+    contents: z.array(ContentsSchema)
+})
+
+
+// ===============================
 // 📘 TIPOS INFERIDOS
 // ===============================
 export type Product = z.infer<typeof ProductSchema>
@@ -164,10 +188,15 @@ export type ShoppingCart = z.infer<typeof ShoppingCartSchema>
 export type CartItem = z.infer<typeof ShoppingCartContentsSchema>
 // export type Coupon = z.infer<typeof CouponResponseSuccessSchema | typeof CouponResponseErrorSchema>
 
+export const TransactionsResponseSchema = z.array(TransactionResponseSchema)
+
 export type Coupon = z.infer<typeof CouponResponseSchema>
 
 export type User = z.infer<typeof UserSchema>;
 export type Address = z.infer<typeof AddressSchema>;
 export type UserRegister = z.infer<typeof UserRegisterSchema>
 export type UserRegisterResponse = z.infer<typeof UserRegisterResponseSchema>;
+
+export type Transaction = z.infer<typeof TransactionResponseSchema>;
+
 

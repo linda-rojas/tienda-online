@@ -180,6 +180,7 @@ export default function RegisterStep1({
                 <input
                     type="text"
                     value="Usuario"
+                    autoComplete='username'
                     disabled
                     className="border p-2 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed focus:border-blue-500 border-gray-500"
                 />

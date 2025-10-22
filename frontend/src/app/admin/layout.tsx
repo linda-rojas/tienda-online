@@ -1,5 +1,6 @@
 // import AdminNav from "@/ui/admin/AdminNav";
 import ToastNotification from "@/ui/ToastNotification";
+import Providers from "./providers";
 
 export default function RootLayout({
   children,
@@ -10,7 +11,7 @@ export default function RootLayout({
     <>
       {/* <AdminNav /> */}
       <div>
-        {children}
+        <Providers>{children}</Providers>
       </div>
       <ToastNotification />
     </>
