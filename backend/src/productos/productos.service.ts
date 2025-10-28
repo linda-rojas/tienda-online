@@ -134,6 +134,6 @@ export class ProductosService {
   async remove(id: number) {
     const producto = await this.findOne(id)
     await this.productoRepository.remove(producto)
-    return 'Producto eliminado con éxito';
+    return { message: 'Producto eliminado con éxito' };
   }
 }
