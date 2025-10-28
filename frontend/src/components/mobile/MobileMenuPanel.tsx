@@ -5,8 +5,7 @@ import { useMenuToggle } from '@/hooks/useMenuToggle'
 import { Category } from '@/schemas/schemas'
 import { CategoryLinks } from '@/components/ui/mainNav/CategoryLinks'
 import AccountLinkMobile from '../ui/AccountLinkMobile'
-// import NavLinksServer from '@/server/NavLinksServer'
-// import { NavLinksClientMobile } from '@/ui/mainNav/NavLinksClientMobile'
+
 
 interface Props {
     categories: Category[]
