@@ -35,7 +35,9 @@ export class CategoriasService {
 
     if (productos === 'true') {
       options.relations = {
-        productos: true
+        productos: {
+          imagenes: true,
+        },
       },
         options.order = {
           productos: {

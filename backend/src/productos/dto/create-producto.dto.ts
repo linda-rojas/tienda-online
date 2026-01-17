@@ -1,4 +1,4 @@
-import { IsDefined, IsNotEmpty, IsNumber, isNumber, IsOptional, IsString, MaxLength, Min } from "class-validator";
+import { IsArray, IsDefined, IsNotEmpty, IsNumber, isNumber, IsOptional, IsString, IsUrl, MaxLength, Min } from "class-validator";
 import { ProductInterface } from "../interfaces/product.interface";
 import { Transform, Type } from "class-transformer";
 
@@ -26,8 +26,10 @@ export class CreateProductoDto implements Omit<ProductInterface, 'id'> {
     @IsString({ message: 'La descripcion no es valida' })
     descripcion: string;
 
-    imagen_url: string;
-    imagen_url2: string;
+    @IsOptional()
+    @IsArray({ message: 'Las imágenes deben ser un arreglo' })
+    @IsUrl({}, { each: true, message: 'Cada imagen debe ser una URL válida' })
+    imagenesUrl?: string[];
 
     @IsNotEmpty({ message: "El stock del producto no Puede ir vacio" })
     @IsNumber({ maxDecimalPlaces: 0 }, { message: 'stock no válido' })

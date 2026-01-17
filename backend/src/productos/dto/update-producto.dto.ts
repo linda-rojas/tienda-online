@@ -1,4 +1,4 @@
-import { IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, Min } from 'class-validator';
+import { IsArray, IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, MaxLength, Min } from 'class-validator';
 import { ProductInterface } from '../interfaces/product.interface';
 import { Transform, Type } from 'class-transformer';
 
@@ -29,10 +29,9 @@ export class UpdateProductoDto implements Partial<Omit<ProductInterface, 'id'>> 
         descripcion?: string;
 
         @IsOptional()
-        imagen_url: string;
-
-        @IsOptional()
-        imagen_url2: string;
+        @IsArray({ message: 'Las imágenes deben ser un arreglo' })
+        @IsUrl({}, { each: true, message: 'Cada imagen debe ser una URL válida' })
+        imagenesUrl?: string[];
 
         @IsNotEmpty({ message: "El stock del producto no Puede ir vacio" })
         @IsNumber({ maxDecimalPlaces: 0 }, { message: 'stock no válido' })

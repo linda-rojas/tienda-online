@@ -1,7 +1,6 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
-
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { typeOrmConfig } from './config/typeorm.config';
@@ -12,6 +11,7 @@ import { CategoriasModule } from './categorias/categorias.module';
 import { RolesModule } from './roles/roles.module';
 import { TransaccionsModule } from './transaccions/transaccions.module';
 import { CuponesModule } from './cupones/cupones.module';
+import { UploadImageModule } from './upload-image/upload-image.module';
 
 @Module({
   imports: [
@@ -29,6 +29,7 @@ import { CuponesModule } from './cupones/cupones.module';
     RolesModule,
     TransaccionsModule,
     CuponesModule,
+    UploadImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ProductInterface } from "../interfaces/product.interface";
 import { Categoria } from "../../categorias/entities/categoria.entity";
 import { Usuario } from "src/usuarios/entities/usuario.entity";
+import { Imagen } from "./imagenes.entity";
 
 @Entity({ name: 'productos' })
 export class Producto implements ProductInterface {
@@ -20,12 +21,6 @@ export class Producto implements ProductInterface {
     @Column({ type: 'text', nullable: false })
     descripcion: string
 
-    @Column({ type: 'text', nullable: true })
-    imagen_url: string;
-
-    @Column({ type: 'text', nullable: true })
-    imagen_url2: string
-
     @Column({ type: 'numeric', nullable: false })
     stock: number
 
@@ -34,6 +29,9 @@ export class Producto implements ProductInterface {
 
     @Column({ name: "categoriaId", type: "int", nullable: false })
     categoriaId: number;
+
+    @OneToMany(() => Imagen, (imagen) => imagen.producto, { cascade: true })
+    imagenes: Imagen[];
 
     @ManyToOne(() => Categoria)
     @JoinColumn({ name: "categoriaId" })

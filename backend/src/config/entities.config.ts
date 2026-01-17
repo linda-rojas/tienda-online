@@ -6,9 +6,11 @@ import { Producto } from "../productos/entities/producto.entity";
 import { Role } from "../roles/entities/role.entity";
 import { Usuario } from "../usuarios/entities/usuario.entity";
 import { TransaccionContenidos } from "src/transaccions/entities/transaccion-contenidos.entity";
+import { Imagen } from "src/productos/entities/imagenes.entity";
 
 export const entities = [
     Producto,
+    Imagen,
     Categoria,
     Usuario,
     Direccione,
