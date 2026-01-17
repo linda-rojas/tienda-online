@@ -12,14 +12,18 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
     const product = await getProduct(productId)
     const category = await getCategory(product.categoriaId)
 
+    const images = (product.imagenes ?? []).map(img => ({
+        url: img.url ?? '/product-notFound.png',  // Aseguramos que la URL no sea nula
+        type: img.type ?? 'primary',
+    }));
+
     return (
         <>
             <HeaderServer />
             <div className="max-w-7xl mx-auto my-10 p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-gray-800">
                 <div>
                     <ProductImageDisplay
-                        imagen_url={product.imagen_url ?? '/product-notFound.png'}
-                        imagen_url2={product.imagen_url2 ?? ''}
+                        imagenes={images}
                         nombre={product.nombre}
                     />
                 </div>

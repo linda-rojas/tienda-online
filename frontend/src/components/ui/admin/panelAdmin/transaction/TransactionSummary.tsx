@@ -19,7 +19,7 @@ export default function TransactionSummary({ transaction }: { transaction: Trans
                                     <figure className="w-32 h-32">
 
                                         <Image
-                                            src={item.producto.imagen_url || '/product-notFound.png'}
+                                            src={item.producto.imagenes?.find(img => img.type === 'primary')?.url || '/product-notFound.png'}
                                             alt={item.producto.nombre}
                                             className='absolute'
                                             fill

@@ -1,5 +1,25 @@
 import z from "zod";
 
+// ===============================
+// 🔳 IMAGENES
+// ===============================
+
+export const ImageSchema = z.object({
+    url: z.string(), // ← ya no usamos .url() para permitir rutas relativas o absolutas
+    type: z.string().transform(t => {
+        const normalized = t.toLowerCase();
+
+        if (['primary', 'secondary', 'gallery'].includes(normalized)) {
+            return normalized;
+        }
+
+        // fallback si viene algo raro
+        return 'primary';
+    })
+});
+
+export const ImagesSchema = z.array(ImageSchema).default([]);
+
 
 // ===============================
 // 📦 PRODUCTOS Y CATEGORÍAS
@@ -11,11 +31,10 @@ export const ProductSchema = z.object({
     subtitulo: z.string(),
     descripcion: z.string().nullable().optional(),
     precio: z.coerce.number(),
-    imagen_url: z.string().nullable().optional(),
-    imagen_url2: z.string().nullable().optional(),
     descuento: z.coerce.number().nullable().optional(),
     stock: z.coerce.number(),
-    categoriaId: z.coerce.number()
+    categoriaId: z.coerce.number(),
+    imagenes: ImagesSchema.optional(),
 })
 
 export const ProductResponseSchema = z.object({
@@ -23,15 +42,31 @@ export const ProductResponseSchema = z.object({
     total: z.number()
 })
 
-export const ProductFormSchema = z.object({
+const ProductFormBase = {
+    id: z.number(),
     nombre: z.string()
         .min(1, { message: 'El Nombre del Producto no puede ir vacio' }),
+    subtitulo: z.string()
+        .min(1, { message: 'El subtitulo del Producto no puede ir vacia' }),
+    descripcion: z.string()
+        .min(1, { message: 'La descripcion del Producto no puede ir vacia' }),
     precio: z.coerce.number({ message: 'Precio no válido' })
         .min(1, { message: 'El Precio debe ser mayor a 0' }),
+    descuento: z.coerce
+        .number({ message: 'descuento no válido' })
+        .min(1, { message: 'El descuento debe ser mayor a 0' })
+        .optional(),
     stock: z.coerce.number({ message: 'Inventario no válido' })
         .min(1, { message: 'El inventario debe ser mayor a 0' }),
-    categoriaId: z.coerce.number({ message: 'La Categoria no es válida' })
-})
+    categoriaId: z.coerce.number({ message: 'La Categoria no es válida' }),
+    imagenes: ImagesSchema.optional(),
+};
+
+export const ProductFormSchema = z.object(ProductFormBase);
+
+const AddProductFormBase = (({ id: __, ...rest }) => (rest))(ProductFormBase);
+
+export const AddProductFormSchema = z.object(AddProductFormBase);
 
 export const CategorySchema = z.object({
     id: z.coerce.number(),
@@ -52,7 +87,7 @@ export const CategoryWithProductsResponseSchema = CategorySchema.extend({
 
 const ShoppingCartContentsSchema = ProductSchema.pick({
     nombre: true,
-    imagen_url: true,
+    imagenes: true,
     precio: true,
     stock: true
 }).extend({
@@ -73,15 +108,6 @@ export const CouponResponseSchema = z.object({
     message: z.string(),
     porcentaje: z.coerce.number().min(0).max(100).default(0)
 })
-
-// export const CouponResponseSuccessSchema = z.object({
-//     nombre: z.string(),
-//     porcentaje: z.coerce.number().min(0).max(100).default(0)
-// })
-
-// export const CouponResponseErrorSchema = z.object({
-//     message: z.string(),
-// })
 
 
 // ===============================
@@ -193,6 +219,7 @@ export const TransactionResponseSchema = z.object({
 // 📘 TIPOS INFERIDOS
 // ===============================
 export type Product = z.infer<typeof ProductSchema>
+export type ProductForm = z.infer<typeof ProductFormSchema>
 export type Category = z.infer<typeof CategorySchema>
 export type ShoppingCart = z.infer<typeof ShoppingCartSchema>
 export type CartItem = z.infer<typeof ShoppingCartContentsSchema>

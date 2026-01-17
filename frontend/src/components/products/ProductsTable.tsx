@@ -1,10 +1,11 @@
-import { Product } from "@/schemas/schemas"
+import { ProductForm } from "@/schemas/schemas"
 import { formatCOP } from "@/utils/format-currency"
 import Image from "next/image"
 import Link from "next/link"
 import DeleteProductForm from "./DeleteProductForm"
+import { getImagePath } from "@/utils/get-image-path"
 
-export default function ProductsTable({ products }: { products: Product[] }) {
+export default function ProductsTable({ products }: { products: ProductForm[] }) {
 
     return (
         <div className="px-4 sm:px-6 lg:px-8 mt-10">
@@ -37,7 +38,11 @@ export default function ProductsTable({ products }: { products: Product[] }) {
                                     <tr key={product.id}>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                             <Image
-                                                src={product.imagen_url || '/product-notFound.png'}
+                                                src={getImagePath(
+                                                    product.imagenes?.find(img => img.type === 'primary')?.url ||
+                                                    product.imagenes?.[0]?.url ||
+                                                    '/product-notFound.png'
+                                                )}
                                                 alt={product.nombre}
                                                 width={140}
                                                 height={140}

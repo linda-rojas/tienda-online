@@ -10,10 +10,20 @@ export default function ProductImage({ product }: { product: Product }) {
     const [hovered, setHovered] = useState(false)
     const [imageLoaded, setImageLoaded] = useState(false)
 
-    const imageToShow =
-        hovered && product.imagen_url2
-            ? product.imagen_url2
-            : product.imagen_url ?? '/product-notFound.png'
+    // Comprobamos si 'product.imagenes' está presente y tiene imágenes
+    const primaryImages = product.imagenes?.filter(img => img.type?.toLowerCase() === 'primary') ?? [];
+    const secondaryImages = product.imagenes?.filter(img => img.type?.toLowerCase() === 'secondary') ?? [];
+
+    // Asegurarse de que 'imagenes' no sea undefined o null
+    console.log('Product:', product); // Muestra el objeto completo product
+    console.log('Product Images:', product.imagenes); // Muestra las imágenes
+
+    const safePrimary = primaryImages[0]?.url ?? '/product-notFound.png';
+    const safeSecondary = secondaryImages[0]?.url ?? safePrimary;
+
+    const imageToShow = hovered ? safeSecondary : safePrimary;
+
+
 
     return (
         <Link href={`/producto/${product.id}`} prefetch>
@@ -25,7 +35,7 @@ export default function ProductImage({ product }: { product: Product }) {
                 {/* ✅ Shimmer mientras carga */}
                 {!imageLoaded && <ProductImageSkeleton />}
 
-                {/* Imagen real */}
+
                 <Image
                     src={imageToShow}
                     alt={product.nombre}

@@ -8,7 +8,7 @@ export default function ShoppingCartItem({ item }: { item: CartItem }) {
     const updateQuantity = useStore((state) => state.updateQuantity)
     const removeFromCart = useStore((state) => state.removeFromCart)
 
-    const img = item.imagen_url ?? '/product-notFound.png'
+    const img = item.imagenes!.find(img => img.type === 'primary')?.url ?? '/product-notFound.png'
     return (
         <li className="flex items-center space-x-6 py-6 relative divide-gray-200 border-t border-gray-200">
             <div className="h-24 w-24">

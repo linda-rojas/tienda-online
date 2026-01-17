@@ -1,17 +1,15 @@
 import { CategoriesResponseSchemas, Product } from "@/schemas/schemas"
+import UploadProductImage from "./UploadProductImage"
 
 async function getCategories() {
     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/categorias`
     const req = await fetch(url)
     const json = await req.json()
     const categories = CategoriesResponseSchemas.parse(json)
-
     return categories;
 }
 
-
 export default async function ProductForm({ product }: { product?: Product }) {
-
     const categories = await getCategories();
 
     return (
@@ -19,7 +17,7 @@ export default async function ProductForm({ product }: { product?: Product }) {
             <div className="space-y-2 ">
                 <label
                     htmlFor="nombre"
-                    className="block"
+                    className="block font-bold text-gray-600"
                 >Nombre Producto</label>
                 <input
                     id="nombre"
@@ -34,7 +32,7 @@ export default async function ProductForm({ product }: { product?: Product }) {
             <div className="space-y-2 ">
                 <label
                     htmlFor="subtitulo"
-                    className="block"
+                    className="block font-bold text-gray-600"
                 >Subtitulo Producto</label>
                 <input
                     id="subtitulo"
@@ -49,21 +47,21 @@ export default async function ProductForm({ product }: { product?: Product }) {
             <div className="space-y-2 ">
                 <label
                     htmlFor="descripcion"
-                    className="block"
+                    className="block font-bold text-gray-600"
                 >Descripcion Producto</label>
                 <textarea
                     id="descripcion"
                     placeholder="Descripcion Producto"
                     className="border border-gray-300 w-full p-2 resize-none min-h-[10rem]"
                     name="descripcion"
-                    defaultValue={product?.descripcion!}
+                    defaultValue={product?.descripcion || ''}
                 />
             </div>
 
             <div className="space-y-2 ">
                 <label
                     htmlFor="precio"
-                    className="block"
+                    className="block font-bold text-gray-600"
                 >Precio</label>
                 <input
                     id="precio"
@@ -79,7 +77,7 @@ export default async function ProductForm({ product }: { product?: Product }) {
             <div className="space-y-2 ">
                 <label
                     htmlFor="descuento"
-                    className="block"
+                    className="block font-bold text-gray-600"
                 >Descuento</label>
                 <input
                     id="descuento"
@@ -88,14 +86,14 @@ export default async function ProductForm({ product }: { product?: Product }) {
                     className="border border-gray-300 w-full p-2"
                     name="descuento"
                     min={0}
-                    defaultValue={product?.precio}
+                    defaultValue={product?.descuento!}
                 />
             </div>
 
             <div className="space-y-2 ">
                 <label
                     htmlFor="stock"
-                    className="block"
+                    className="block font-bold text-gray-600"
                 >Inventario</label>
                 <input
                     id="stock"
@@ -108,10 +106,10 @@ export default async function ProductForm({ product }: { product?: Product }) {
                 />
             </div>
 
-            <div className="space-y-2 ">
+            <div className="space-y-2">
                 <label
                     htmlFor="categoryId"
-                    className="block"
+                    className="block font-bold text-gray-600"
                 >Categoría</label>
                 <select
                     id="categoryId"
@@ -125,7 +123,7 @@ export default async function ProductForm({ product }: { product?: Product }) {
                     ))}
                 </select>
             </div>
-
+            <UploadProductImage productId={product?.id!} />
         </>
     )
 }

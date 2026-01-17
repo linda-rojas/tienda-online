@@ -3,7 +3,16 @@ import type { NextConfig } from 'next'
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
     images: {
-        domains: ['res.cloudinary.com'],
+        remotePatterns: [
+            {
+                protocol: 'http',
+                hostname: 'res.cloudinary.com'
+            },
+            {
+                protocol: 'https',
+                hostname: 'res.cloudinary.com'
+            },
+        ],
     },
 }
 

@@ -50,7 +50,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
           <Heading>Administrar Productos</Heading>
 
           <ProductsTable
-            products={products}
+            products={products as any}
           />
 
           <Pagination
