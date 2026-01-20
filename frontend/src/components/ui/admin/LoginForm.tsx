@@ -5,8 +5,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import Link from 'next/link';
 import { loginUser } from '@/services/loginUser/loginUser';
 import { validateEmail, validatePassword } from '@/services/loginUser/validation';
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+
 
 const LoginForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -101,13 +104,24 @@ const LoginForm = () => {
     const { success, data, error } = await loginUser(email, password);
 
     if (!success) {
-      if (error === 'Usuario con correo no encontrado') {
+      const msg = (error || '').toLowerCase();
+
+      // ✅ Correo no encontrado
+      if (msg.includes('correo') && msg.includes('no encontrado')) {
+        setEmailError('El correo electrónico no está registrado.');
         toast.error('El correo electrónico no está registrado.');
-      } else if (error === 'Contraseña incorrecta') {
-        toast.error('La contraseña es incorrecta.');
-      } else {
-        toast.error('Hubo un error en el proceso de inicio de sesión.');
+        return;
       }
+
+      // ✅ Contraseña incorrecta
+      if (msg.includes('contraseña') && msg.includes('incorrecta')) {
+        setPasswordError('La contraseña es incorrecta.');
+        toast.error('La contraseña es incorrecta.');
+        return;
+      }
+
+      // ✅ Otro error
+      toast.error(error || 'Hubo un error en el proceso de inicio de sesión.');
       return;
     }
 
@@ -171,7 +185,11 @@ const LoginForm = () => {
               className={`w-full p-2 border text-gray-500 ${emailError ? 'border-red-500' : 'border-gray-300'
                 } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none`}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (emailError) setEmailError('');
+              }}
+
               required
             />
             {emailError && (
@@ -186,16 +204,37 @@ const LoginForm = () => {
             >
               Contraseña
             </label>
-            <input
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              className={`w-full p-2 border text-gray-500 ${passwordError ? 'border-red-500' : 'border-gray-300'
-                } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none`}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                autoComplete="current-password"
+                className={`w-full p-2 pr-12 border text-gray-500 ${passwordError ? "border-red-500" : "border-gray-300"
+                  } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (passwordError) setPasswordError('');
+                }}
+
+                required
+              />
+
+              {/* 👁 Icono dentro del input */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition bg-transparent border-0 outline-none focus:outline-none"
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                {showPassword ? (
+                  <AiOutlineEye className="text-xl" />
+                ) : (
+                  <AiOutlineEyeInvisible className="text-xl" />
+                )}
+              </button>
+            </div>
+
             {passwordError && (
               <div className="text-red-500 text-sm mt-1">{passwordError}</div>
             )}
@@ -204,7 +243,7 @@ const LoginForm = () => {
           <div className="w-full flex items-center justify-around mt-6 lg:mt-0">
             <button
               type="submit"
-              className="w-[70px] sm:w-[150px] lg:w-[200px] bg-gradient-to-r from-[#023D71] to-indigo-600 text-white font-semibold py-2 rounded-lg shadow-md hover:scale-105 transform transition-all duration-300 cursor-pointer text-[15px] sm:text-[18px] lg:text-[18px]"
+              className="w-[70px] sm:w-[150px] lg:w-[200px] bg-gradient-to-r from-[#3399f2] to-indigo-600 text-white font-semibold py-2 rounded-lg shadow-md hover:scale-105 transform transition-all duration-300 cursor-pointer text-[15px] sm:text-[18px] lg:text-[18px]"
             >
               Entrar
             </button>
