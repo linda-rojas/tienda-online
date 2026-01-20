@@ -76,7 +76,11 @@ export class TransaccionsService {
   findAll(transacciondate?: string) {
     const options: FindManyOptions<Transaccion> = {
       relations: {
-        contents: true,
+        contents: {
+          producto: {
+            imagenes: true
+          }
+        },
         usuario: true
       }
     }
@@ -106,7 +110,14 @@ export class TransaccionsService {
       where: {
         id
       },
-      relations: ['contents', 'usuario'],
+      relations: {
+        contents: {
+          producto: {
+            imagenes: true,
+          },
+        },
+        usuario: true,
+      },
     })
 
     if (!transaction) {
