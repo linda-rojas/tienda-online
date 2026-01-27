@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Usuario } from "../entities/usuario.entity";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import bcrypt from "node_modules/bcryptjs";
+import { hashPassword } from "src/utils/bycript.util";
 import { MailService } from "src/mailer/mailer.service";
 import { ConfigService } from "@nestjs/config";
 
@@ -29,7 +29,8 @@ export class PasswordResetService {
             secret: process.env.JWT_RESET_SECRET,
         });
 
-        const url = new URL(this.configService.get('FRONTEND_URL') ?? '');
+        const base = this.configService.get('FRONTEND_URL') ?? '';
+        const url = new URL('/auth/reset-password', base);
         url.searchParams.set('token', token);
         await this.mailService.sendResetPasswordEmail(user, url.toString());
         return responseText;
@@ -44,9 +45,12 @@ export class PasswordResetService {
             const user = await this.usuarioRepository.findOneBy({ id: payload.id });
             if (!user) throw new NotFoundException('Usuario no encontrado');
 
-            user.contrasena = await bcrypt.hash(nuevaContrasena, 10);
-            await this.usuarioRepository.save(user);
+            const hashed = await hashPassword(nuevaContrasena);
 
+            await this.usuarioRepository.update(
+                { id: payload.id },
+                { contrasena: hashed },
+            );
             return 'Contraseña actualizada correctamente';
         } catch (error) {
             throw new NotFoundException('Token inválido o expirado');

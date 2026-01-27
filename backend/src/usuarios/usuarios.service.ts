@@ -14,7 +14,7 @@ import { ValidationService } from 'src/services/validation.service';
 import { PasswordResetService } from './services/password-reset.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { comparePasswords, hashPassword } from 'src/auth/bycript.util';
+import { comparePasswords, hashPassword } from 'src/utils/bycript.util';
 
 @Injectable()
 export class UsuariosService {
@@ -99,7 +99,7 @@ export class UsuariosService {
     const { correo, contrasena } = loginUsuarioDto
     const user = await this.usuarioRepository.findOne({
       where: { correo },
-      select: { correo: true, contrasena: true, id: true },
+      select: { correo: true, contrasena: true, id: true, nombre: true },
       relations: { role: true }
     })
 
@@ -111,8 +111,11 @@ export class UsuariosService {
       throw new UnauthorizedException(`Contraseña incorrecta`);
     }
 
+    // ❌ quita contrasena del response
+    const { contrasena: _, ...safeUser } = user;
+
     return {
-      ...user,
+      ...safeUser,
       token: this.getJwtToken({
         id: user.id,
         role: user.role.nombre
@@ -170,8 +173,8 @@ export class UsuariosService {
   }
 
   async resetPassword(token: string, nuevaContrasena: string) {
-    const hashed = await hashPassword(nuevaContrasena);
-    return this.passwordResetService.resetPassword(token, hashed);
+    // const hashed = await hashPassword(nuevaContrasena);
+    return this.passwordResetService.resetPassword(token, nuevaContrasena);
   }
 
   // verificar correo
