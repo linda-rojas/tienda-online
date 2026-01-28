@@ -3,8 +3,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { Product } from '@/schemas/schemas'
 import Link from 'next/link'
-import ProductImageSkeleton from '@/utils/skeleton/ProductImageSkeleton'
-
+import Skeleton from '../ui/skeletons/Skeleton'
 
 export default function ProductImage({ product }: { product: Product }) {
     const [hovered, setHovered] = useState(false)
@@ -33,7 +32,7 @@ export default function ProductImage({ product }: { product: Product }) {
                 onMouseLeave={() => setHovered(false)}
             >
                 {/* ✅ Shimmer mientras carga */}
-                {!imageLoaded && <ProductImageSkeleton />}
+                {!imageLoaded && (<Skeleton className="absolute inset-0 rounded-t-lg bg-gray-200" />)}
 
 
                 <Image

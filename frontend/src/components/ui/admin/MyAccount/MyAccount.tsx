@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { FaUserCircle } from 'react-icons/fa';
+import MyAccountSkeleton from '../../skeletons/MyAccountSkeleton';
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -73,7 +74,7 @@ const MyAccount = () => {
 
 
   if (isLoading) {
-    return <div>Cargando...</div>;
+    return <MyAccountSkeleton />;
   }
 
   if (!usuarioData) {

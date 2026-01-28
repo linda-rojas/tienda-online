@@ -4,7 +4,8 @@ import { usePathname } from 'next/navigation'
 import { Category } from '@/schemas/schemas'
 import { IoMdArrowDropdown } from 'react-icons/io'
 import { montserrat } from '../../../ui/fonts'
-import CategoryLinksSkeleton from '@/utils/skeleton/CategoryLinksSkeleton'
+import CategoryLinksSkeleton from '../skeletons/CategoryLinksSkeleton'
+
 
 interface Props {
     categories: Category[]
@@ -16,7 +17,7 @@ interface Props {
 export function CategoryLinks({ categories, variant = 'desktop', onClick, isLoading = false }: Props) {
     const pathname = usePathname()
 
-    if (isLoading) return <CategoryLinksSkeleton variant={variant} />
+    if (isLoading) return <CategoryLinksSkeleton variant={variant} />;
 
     return (
         <ul

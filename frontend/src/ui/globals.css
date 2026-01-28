@@ -1,5 +1,62 @@
 @import 'tailwindcss';
 
+/* =========================
+   Skeleton shimmer (global)
+   ========================= */
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Contenedor base del skeleton */
+.skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: #e5e7eb;
+    /* gray-200 */
+    border-radius: 12px;
+}
+
+/* Brillo animado */
+.skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.6),
+            transparent);
+    animation: shimmer 1.2s infinite;
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton {
+    position: relative;
+    overflow: hidden;
+    background-image: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.06) 0%,
+            rgba(255, 255, 255, 0.18) 50%,
+            rgba(255, 255, 255, 0.06) 100%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
 .hover-bg-blue:hover {
     background-color: #408FD8;
 }
