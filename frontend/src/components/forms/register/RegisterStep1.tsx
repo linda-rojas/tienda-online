@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { UserRegister } from '@/schemas/schemas'
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 type SimpleField = 'nombre' | 'apellidos' | 'celular' | 'correo' | 'contrasena'
 
@@ -34,8 +35,10 @@ export default function RegisterStep1({
         contrasena: '',
     })
 
-    const [showPasswordWarning, setShowPasswordWarning] = useState(true)
-    const [checkingEmail, setCheckingEmail] = useState(false) // 👈 nuevo estado
+    const [showPasswordWarning, setShowPasswordWarning] = useState(false)
+    const [checkingEmail, setCheckingEmail] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
+    const [showEmailWarning, setShowEmailWarning] = useState(false);
 
     const validate = () => {
         const newErrors: Record<SimpleField, string> = {
@@ -74,9 +77,21 @@ export default function RegisterStep1({
     }, [data])
 
     useEffect(() => {
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/
-        setShowPasswordWarning(!regex.test(data.contrasena))
-    }, [data.contrasena])
+        const value = data.contrasena || "";
+        const regex = /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/;
+        const minLength = value.length >= 6;
+
+        // Validación completa de la contraseña
+        const valid = regex.test(value) && minLength;
+
+        setShowPasswordWarning(value.length > 0 && !valid);
+    }, [data.contrasena]);
+
+    // 🔹 Efecto para mostrar advertencia de correo inválido
+    useEffect(() => {
+        const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.correo);
+        setShowEmailWarning(data.correo.trim().length > 0 && !isEmailValid);
+    }, [data.correo]);
 
     // 🔹 Nueva función para verificar si el correo ya está registrado
     const checkEmailExists = async (correo: string): Promise<boolean> => {
@@ -126,39 +141,73 @@ export default function RegisterStep1({
         onNext()
     }
 
-    const renderInput = (field: SimpleField, type: string, placeholder: string) => (
-        <div>
-            <input
-                type={type}
-                placeholder={placeholder}
-                value={data[field]}
-                onChange={(e) => {
-                    let value = e.target.value
-                    if (field === 'celular') {
-                        value = value.replace(/\D/g, '').slice(0, 10)
-                    }
-                    onChange(field, value)
-                }}
-                onBlur={() => setTouched((prev) => ({ ...prev, [field]: true }))}
-                className={`border p-2 rounded-lg outline-none w-full focus:ring-2 ${(errors[field] || serverErrors?.[field]) && touched[field]
-                    ? 'border-red-500'
-                    : 'focus:ring-blue-500'
-                    }`}
-            />
+    const renderInput = (field: SimpleField, type: string, placeholder: string, label: string,) => {
+        const hasError = (errors[field] || serverErrors?.[field]) && touched[field];
 
-            {(errors[field] || serverErrors?.[field]) && touched[field] && (
-                <p className="text-red-500 text-sm mt-1">
-                    {errors[field] || serverErrors?.[field]}
-                </p>
-            )}
+        const inputType =
+            field === "contrasena" ? (showPassword ? "text" : "password") : type;
 
-            {field === 'contrasena' && showPasswordWarning && data.contrasena.length > 0 && (
-                <p className="text-yellow-500 text-sm mt-2">
-                    La contraseña debe tener al menos una letra mayúscula, una minúscula y un número.
-                </p>
-            )}
-        </div>
-    )
+        return (
+            <div>
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-gray-500 mb-1">
+                    {label}
+                </label>
+                <div className="relative">
+                    <input
+                        type={inputType}
+                        placeholder={placeholder}
+                        value={data[field]}
+                        onChange={(e) => {
+                            let value = e.target.value;
+                            if (field === "celular") {
+                                value = value.replace(/\D/g, "").slice(0, 10);
+                            }
+                            onChange(field, value);
+                        }}
+                        onBlur={() => setTouched((prev) => ({ ...prev, [field]: true }))}
+                        className={`border p-2 rounded-lg outline-none text-gray-700 w-full focus:ring-2 ${field === "contrasena" ? "pr-12" : ""
+                            } ${hasError ? "border-red-500" : "focus:ring-blue-500 border-gray-500"
+                            }`}
+                    />
+                    {field === "contrasena" && (
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition
+                            bg-transparent border-0 outline-none focus:outline-none focus:ring-0"
+                            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                        >
+                            {showPassword ? (
+                                <AiOutlineEye className="text-xl" />
+                            ) : (
+                                <AiOutlineEyeInvisible className="text-xl" />
+                            )}
+                        </button>
+                    )}
+
+                    {field === "correo" && showEmailWarning && (
+                        <div className="text-yellow-600 text-xs p-2 absolute left-0 right-0 top-[42px] z-10 px-2 items-center rounded-lg bg-yellow-100 shadow-md">
+                            El correo debe tener el símbolo '@' y un punto ('.') en la dirección.
+                        </div>
+                    )}
+
+                    {/* Alerta para contraseña */}
+                    {field === "contrasena" && showPasswordWarning && (
+                        <div className="text-yellow-600 text-xs p-2 absolute left-0 right-0 top-full px-2 items-center rounded-lg bg-yellow-100 shadow-md" role="tooltip" id="passwordHelp">
+                            La contraseña debe tener mínimo 6 caracteres, una mayúscula, una minúscula y un número o símbolo.
+                        </div>
+                    )}
+                </div>
+
+                {hasError && (
+                    <p className="text-red-500 text-sm mt-1">
+                        {errors[field] || serverErrors?.[field]}
+                    </p>
+                )}
+
+            </div>
+        );
+    };
 
     const isValid =
         Object.values(errors).every((v) => !v) &&
@@ -171,19 +220,11 @@ export default function RegisterStep1({
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {renderInput('nombre', 'text', 'Nombre')}
-                {renderInput('apellidos', 'text', 'Apellidos')}
-                {renderInput('celular', 'text', 'Celular')}
-                {renderInput('correo', 'email', 'Correo electrónico')}
-                {renderInput('contrasena', 'password', 'Contraseña')}
-
-                <input
-                    type="text"
-                    value="Usuario"
-                    autoComplete='username'
-                    disabled
-                    className="border p-2 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed focus:border-blue-500 border-gray-500"
-                />
+                {renderInput("nombre", "text", "Escribe tu nombre", "Nombre")}
+                {renderInput("apellidos", "text", "Apellidos", "Apellidos")}
+                {renderInput("celular", "text", "Celular", "Celular")}
+                {renderInput("correo", "email", "Correo electrónico", "Correo")}
+                {renderInput("contrasena", "password", "Contraseña", "Contraseña")}
             </div>
 
             <div className="flex justify-end">

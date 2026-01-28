@@ -14,7 +14,7 @@ interface NavProps {
 export function Nav({ categories }: NavProps) {
 
     return (
-        <nav className="w-full fixed color-red-bg flex items-center justify-between px-6 p-2 md:px-6 lg:px-12">
+        <nav className="w-full fixed top-0 z-50 color-red-bg flex items-center justify-between px-6 p-2 md:px-6 lg:px-12">
             <MenuIcon />
             <MobileMenuPanel categories={categories} />
             <LogoAutocaucho />

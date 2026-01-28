@@ -89,7 +89,7 @@ export default function RegisterStep3({ data, onBack, onConfirm }: Props) {
                                 onChange={(e) => setAccepted(e.target.checked)}
                             />
                             <span className="text-sm text-gray-600">
-                                Acepto los <a href="/terminos" className="text-blue-600 underline">términos y condiciones</a> del servicio.
+                                Acepto los <a href="/info-sobre-nosotros/legal/terminos-condiciones" className="text-blue-600 underline">términos y condiciones</a> del servicio.
                             </span>
                         </label>
                         {error && (

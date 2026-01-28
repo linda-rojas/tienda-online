@@ -1,9 +1,8 @@
 'use client'
-
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { motion } from 'framer-motion'
-import { useRouter } from 'next/navigation' // 👈 Nuevo
+import { useRouter } from 'next/navigation'
 import RegisterStep1 from './RegisterStep1'
 import RegisterStep2 from './RegisterStep2'
 import RegisterStep3 from './RegisterStep3'
@@ -11,7 +10,7 @@ import { registerUser } from '@/services/user/registerUser'
 import { validateUserData } from '@/services/user/validation'
 
 export default function RegisterWizard() {
-    const router = useRouter() // 👈 Para redirigir sin recargar la app
+    const router = useRouter() // Para redirigir sin recargar la app
 
     const [step, setStep] = useState(1)
     const [direction, setDirection] = useState(0)

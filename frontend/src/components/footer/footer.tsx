@@ -47,12 +47,13 @@ export default function Footer({ categories }: Props) {
                     <ul className="space-y-2 text-justify mb-10 sm:mb-0 lg:mb-0">
                         {categories.map((category) => {
                             const isActive = pathname === `/${category.id}`
-                            return(
-                            <Link key={category.id} href={`/${category.id}`} className={`flex hover:font-bold  
+                            return (
+                                <Link key={category.id} href={`/${category.id}`} className={`flex hover:font-bold  
                                 ${isActive
-                                    ? 'font-semibold text-[#023D71]'
-                                    : ''} `}>{category.nombre}</Link>
-                        )})}
+                                        ? 'font-semibold text-[#023D71]'
+                                        : ''} `}>{category.nombre}</Link>
+                            )
+                        })}
                     </ul>
                 </div>
 
@@ -63,7 +64,7 @@ export default function Footer({ categories }: Props) {
                     </h3>
                     <div className="flex flex-col justify-center text-center">
                         <p className="flex items-center gap-3 mb-3">
-                        <span className="font-semibold">Cel: </span>
+                            <span className="font-semibold">Cel: </span>
                             <FaWhatsapp className="h-5 w-5 text-green-600" />
                             <span className="font-semibold">+57 321 576 ....</span>
                         </p>
@@ -95,7 +96,7 @@ export default function Footer({ categories }: Props) {
                     <div className="mt-6">
                         <h4 className="text-sm font-bold text-blue-500 mb-2">Hecho por</h4>
                         <div className="flex items-center gap-2">
-                            <p className="font-bold">LR</p>
+                            <span className="font-bold text-gray-600">Soluciones Digitales LR</span>
                             <LiaAtomSolid className="h-6 w-6" />
                         </div>
                     </div>
@@ -103,7 +104,7 @@ export default function Footer({ categories }: Props) {
             </div>
 
             {/* Línea de pago */}
-            <div className="bg-blue-900 text-white py-6">
+            <div className="bg-[#023d71] text-white py-6">
                 <div className="max-w-7xl mx-auto flex flex-col items-center gap-4">
                     <h3 className="text-lg font-bold">Formas de pago</h3>
                     <div className="flex gap-6 items-center">
@@ -123,7 +124,7 @@ export default function Footer({ categories }: Props) {
                         />
                     </div>
                     <p className="text-xs text-gray-300 mt-4">
-                        © {new Date().getFullYear()} AutoCauchos. Todos los derechos reservados.
+                        © {new Date().getFullYear()} AutoCaucho. Todos los derechos reservados.
                     </p>
                 </div>
             </div>

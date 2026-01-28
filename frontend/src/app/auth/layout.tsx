@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
-import { montserrat, roboto } from '../../../ui/fonts'
 import { Nav } from '@/components/ui/mainNav/Nav';
-import FooterServer from '@/components/footer/foooterServer';
+import { montserrat, roboto } from '@/ui/fonts';
 
 interface Category {
     id: number;
@@ -25,7 +24,6 @@ export default function RootLayout({
             <body className={`${roboto} ${montserrat} antialiased`}>
                 <Nav categories={categories} />
                 <main className='mt-30'>{children}</main>
-                <FooterServer />
             </body>
         </html>
     )

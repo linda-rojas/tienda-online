@@ -7,6 +7,10 @@ import { loginUser } from '@/services/loginUser/loginUser';
 import { validateEmail, validatePassword } from '@/services/loginUser/validation';
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
+const getUserName = (u: any) => {
+  const name = u?.nombre || u?.user?.nombre || '';
+  return String(name).trim();
+};
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -56,6 +60,7 @@ const LoginForm = () => {
 
       // Extraer rol correctamente
       const parsedUser = JSON.parse(storedUser);
+      const name = getUserName(parsedUser);
       const role =
         typeof parsedUser.role === 'string'
           ? parsedUser.role.toLowerCase()
@@ -71,7 +76,7 @@ const LoginForm = () => {
           },
         });
       } else {
-        toast.success('Bienvenido, serás redirigido a la tienda 🛍️', {
+        toast.success(`¡Bienvenid@${name ? ` ${name}` : ''}! Serás redirigido a la tienda`, {
           onClose: () => {
             setTimeout(() => {
               window.location.href = '/';
@@ -129,6 +134,7 @@ const LoginForm = () => {
       localStorage.setItem('usuario', JSON.stringify(data));
       localStorage.setItem('token', data.token);
       setUserData(data);
+      const name = getUserName(data);
 
       // 🧠 NUEVO: guardar también en cookies (middleware las usa)
       document.cookie = `token=${data.token}; path=/; max-age=3600;`; // 1 hora
@@ -148,7 +154,7 @@ const LoginForm = () => {
           },
         });
       } else {
-        toast.success('Bienvenido, serás redirigido a la tienda 🛍️', {
+        toast.success(`¡Bienvenid@${name ? ` ${name}` : ''}! Serás redirigido a la tienda`, {
           onClose: () => {
             setTimeout(() => {
               window.location.href = '/';
@@ -269,7 +275,7 @@ const LoginForm = () => {
 
         <div className="mt-2 text-center">
           <Link
-            href="/"
+            href="/auth/forgot-password"
             className="text-gray-500 hover:text-gray-600 text-[14px] sm:text-[16px] font-semibold"
           >
             ¿Olvidaste tu contraseña?

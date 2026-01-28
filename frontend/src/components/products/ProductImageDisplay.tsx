@@ -57,7 +57,7 @@ const ProductImageDisplay = ({ imagenes, nombre }: ProductImageDisplayProps) => 
           </div>
         )}
 
-        {/* Imagen secundaria (miniatura), solo si existe */}
+        {/* Imagen secundaria */}
         {secondaryImages.map((image, index) => (
           <div
             key={index}
@@ -74,7 +74,7 @@ const ProductImageDisplay = ({ imagenes, nombre }: ProductImageDisplayProps) => 
           </div>
         ))}
 
-        {/* Imagen de galería (miniatura), solo si existe */}
+        {/* Imagen de galería (miniatura) */}
         {galleryImages.map((image, index) => (
           <div
             key={index}

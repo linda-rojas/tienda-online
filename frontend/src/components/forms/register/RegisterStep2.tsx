@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 
 interface Props {
     data: { direcciones: Address[] }
-    onChangeAddress: (field: keyof Address, value: string) => void
+    onChangeAddress: (field: keyof Address, value: string, label: string) => void
     onBack: () => void
     onSubmit: () => void
 }
@@ -89,17 +89,23 @@ export default function RegisterStep2({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Departamento */}
                 <div>
+                    <label
+                        htmlFor="departamento"
+                        className="block text-[14px] sm:text-[16px] font-semibold text-gray-500 mb-1"
+                    >
+                        Departamento
+                    </label>
                     <select
                         value={address.departamento}
                         onChange={(e) =>
-                            onChangeAddress('departamento', e.target.value)
+                            onChangeAddress('departamento', e.target.value, 'Departamento')
                         }
                         onBlur={() =>
                             setTouched((prev) => ({ ...prev, departamento: true }))
                         }
-                        className={`border p-2 rounded-lg outline-none w-full focus:ring-2 ${errors.departamento && touched.departamento
+                        className={`text-gray-700 border p-2 rounded-lg outline-none w-full focus:ring-2 ${errors.departamento && touched.departamento
                             ? 'border-red-500'
-                            : 'focus:ring-blue-500'
+                            : 'focus:ring-blue-500 border-gray-500'
                             }`}
                     >
                         <option value="">Seleccione un departamento</option>
@@ -118,16 +124,19 @@ export default function RegisterStep2({
 
                 {/* Ciudad */}
                 <div>
+                    <label htmlFor="ciudad" className="block text-[14px] sm:text-[16px] font-semibold text-gray-500 mb-1">
+                        Ciudad
+                    </label>
                     <select
                         value={address.ciudad}
-                        onChange={(e) => onChangeAddress('ciudad', e.target.value)}
+                        onChange={(e) => onChangeAddress('ciudad', e.target.value, 'Ciudad')}
                         onBlur={() =>
                             setTouched((prev) => ({ ...prev, ciudad: true }))
                         }
                         disabled={!selectedDept}
-                        className={`border p-2 rounded-lg outline-none w-full focus:ring-2 ${errors.ciudad && touched.ciudad
+                        className={`border text-gray-700 p-2 rounded-lg outline-none w-full focus:ring-2 ${errors.ciudad && touched.ciudad
                             ? 'border-red-500'
-                            : 'focus:ring-blue-500'
+                            : 'focus:ring-blue-500 border-gray-500'
                             }`}
                     >
                         <option value="">Seleccione una ciudad</option>
@@ -144,19 +153,22 @@ export default function RegisterStep2({
 
                 {/* Dirección */}
                 <div>
+                    <label htmlFor="direccion" className="block text-[14px] sm:text-[16px] font-semibold text-gray-500 mb-1">
+                        Dirección
+                    </label>
                     <input
                         type="text"
                         placeholder="Dirección (Ej: Cra 1 N° 6-30)"
                         value={address.direccion}
                         onChange={(e) =>
-                            onChangeAddress('direccion', e.target.value)
+                            onChangeAddress('direccion', e.target.value, 'Dirección')
                         }
                         onBlur={() =>
                             setTouched((prev) => ({ ...prev, direccion: true }))
                         }
-                        className={`border p-2 rounded-lg outline-none w-full focus:ring-2 ${errors.direccion && touched.direccion
+                        className={`border text-gray-700 p-2 rounded-lg outline-none w-full focus:ring-2 ${errors.direccion && touched.direccion
                             ? 'border-red-500'
-                            : 'focus:ring-blue-500'
+                            : 'focus:ring-blue-500 border-gray-500'
                             }`}
                     />
                     {errors.direccion && touched.direccion && (
@@ -166,20 +178,23 @@ export default function RegisterStep2({
 
                 {/* Celular */}
                 <div>
+                    <label htmlFor="celular" className="block text-[14px] sm:text-[16px] font-semibold text-gray-500 mb-1">
+                        Celular de contacto
+                    </label>
                     <input
                         type="text"
                         placeholder="Celular de contacto"
                         value={address.celular}
                         onChange={(e) => {
                             const onlyNumbers = e.target.value.replace(/\D/g, '').slice(0, 10)
-                            onChangeAddress('celular', onlyNumbers)
+                            onChangeAddress('celular', onlyNumbers, 'Celular')
                         }}
                         onBlur={() =>
                             setTouched((prev) => ({ ...prev, celular: true }))
                         }
                         className={`border p-2 rounded-lg outline-none w-full focus:ring-2 ${errors.celular && touched.celular
                             ? 'border-red-500'
-                            : 'focus:ring-blue-500'
+                            : 'focus:ring-blue-500 border-gray-500'
                             }`}
                     />
                     {errors.celular && touched.celular && (
@@ -202,7 +217,7 @@ export default function RegisterStep2({
                     onClick={handleNext}
                     className={`py-2 px-2 lg:py-2 lg:px-3 cursor-pointer text-[14px] lg:text-[15px] rounded-lg text-white font-semibold transition-all duration-300 ${Object.values(errors).some((e) => e !== '')
                         ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-green-600 hover:scale-105'
+                        : 'bg-blue-600 hover:scale-105'
                         }`}
                 >
                     Confirmar
