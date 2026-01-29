@@ -1,18 +1,15 @@
 'use client'
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect } from "react";
+import { addProduct } from "../../actions/add-product-action";
 import { toast } from "react-toastify";
-import { useRouter } from 'next/navigation';
-import { useParams } from "next/navigation";
-import { UpdateProduct } from "../actions/update-product-action";
+import { useRouter } from "next/navigation";
 
 
-export default function EditProductForm({ children }: { children: React.ReactNode }) {
 
-    const router = useRouter();
-    const { id } = useParams<{ id: string }>()
+export default function AddProductForm({ children }: { children: React.ReactNode }) {
 
-    const UpdateProductWithId = UpdateProduct.bind(null, +id)
-    const [state, dispatch] = useActionState(UpdateProductWithId, {
+    const router = useRouter()
+    const [state, dispatch] = useActionState(addProduct, {
         errors: [],
         success: ''
     })
@@ -36,7 +33,7 @@ export default function EditProductForm({ children }: { children: React.ReactNod
             <input
                 type='submit'
                 className='rounded bg-green-500 font-bold py-2 w-full cursor-pointer text-gray-800'
-                value='Guardar Cambios'
+                value='Agregar Producto'
             />
         </form>
     );

@@ -1,5 +1,5 @@
-import EditProductForm from "@/components/products/EditProductForm";
-import ProductForm from "@/components/products/ProductForm";
+import EditProductForm from "@/components/ui/products/EditProductForm";
+import ProductForm from "@/components/ui/products/ProductForm";
 import AdminNav from "@/components/ui/admin/panelAdmin/AdminNav";
 import Heading from "@/components/ui/admin/panelAdmin/Heading";
 import { ProductSchema } from "@/schemas/schemas";

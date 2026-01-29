@@ -1,7 +1,7 @@
 'use client'
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone'
-import { uploadImage } from '../actions/upload-images-action';
+import { uploadImage } from '../../actions/upload-images-action';
 import Image from 'next/image';
 
 

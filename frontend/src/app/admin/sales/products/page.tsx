@@ -1,4 +1,4 @@
-import ProductsTable from "@/components/products/ProductsTable";
+import ProductsTable from "@/components/ui/products/ProductsTable";
 import AdminNav from "@/components/ui/admin/panelAdmin/AdminNav";
 import Heading from "@/components/ui/admin/panelAdmin/Heading";
 import Pagination from "@/components/ui/Pagination";

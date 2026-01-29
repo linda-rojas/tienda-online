@@ -1,5 +1,5 @@
 import FooterServer from '@/components/footer/foooterServer'
-import ProductCard from '@/components/products/productCards'
+import ProductCard from '@/components/ui/products/productCards'
 import { CategoryWithProductsResponseSchema } from '@/schemas/schemas'
 import HeaderServer from '@/components/ui/mainNav/HeaderServer'
 import { redirect } from 'next/navigation'

@@ -1,7 +1,7 @@
-import AddProductButton from '@/components/products/AddProductButton'
+import AddProductButton from '@/components/ui/products/AddProductButton'
 import { formatCOP } from '@/utils/format-currency'
-import { getProduct, getCategory } from '@/services/product.service'
-import ProductImageDisplay from '@/components/products/ProductImageDisplay'
+import { getProduct, getCategory } from '@/services/categories/categories.service'
+import ProductImageDisplay from '@/components/ui/products/ProductImageDisplay'
 import HeaderServer from '@/components/ui/mainNav/HeaderServer'
 import FooterServer from '@/components/footer/foooterServer'
 

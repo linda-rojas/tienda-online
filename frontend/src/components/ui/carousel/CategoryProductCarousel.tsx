@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Category, Product } from '@/schemas/schemas';
-import { getCategoryWithProducts } from '@/services/product.service';
-import ProductCard from '../../products/productCards';
+import { getCategoryWithProducts } from '@/services/categories/categories.service';
+import ProductCard from '../products/productCards';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import CategoryCarouselSkeleton from '../skeletons/CategoryCarouselSkeleton';
 
