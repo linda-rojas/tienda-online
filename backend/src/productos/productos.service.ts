@@ -143,38 +143,33 @@ export class ProductosService {
   }
 
 
-  async findAll(categoriaId: number | null, take: number, skip: number) {
+  async findAll(categoriaId: number | null, take: number, skip: number, q?: string | null) {
     try {
-      const options: FindManyOptions<Producto> = {
-        // para que me traiga la categoria
-        relations: {
-          categoria: true,
-          imagenes: true,
-        },
-        order: {
-          id: 'DESC'
-        },
-        take,
-        skip
-      }
+      const qb = this.productoRepository
+        .createQueryBuilder("p")
+        .leftJoinAndSelect("p.categoria", "c")
+        .leftJoinAndSelect("p.imagenes", "i")
+        .orderBy("p.id", "DESC")
+        .take(take)
+        .skip(skip);
 
       if (categoriaId) {
-        options.where = {
-          categoria: {
-            id: categoriaId
-          }
-        }
+        qb.andWhere("p.categoriaId = :categoriaId", { categoriaId });
       }
 
-      const [productos, total] = await this.productoRepository.findAndCount(options)
-
-      return {
-        productos, // muestra todos los datos de la consulta
-        total // registros en total
+      if (q) {
+        // Postgres: ILIKE para case-insensitive
+        qb.andWhere(
+          "(p.nombre ILIKE :q OR p.subtitulo ILIKE :q OR p.descripcion ILIKE :q)",
+          { q: `%${q}%` }
+        );
       }
+
+      const [productos, total] = await qb.getManyAndCount();
+
+      return { productos, total };
     } catch (error) {
-      this.validationService.handleExceptions(error)
-
+      this.validationService.handleExceptions(error);
     }
   }
 

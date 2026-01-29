@@ -1,15 +1,24 @@
-import { IsNumberString, IsOptional } from "class-validator";
+import { Type } from "class-transformer";
+import { IsInt, IsOptional, IsString, Min } from "class-validator";
 
 export class GetProductsQueryDto {
     @IsOptional()
-    @IsNumberString({}, {message: 'La categoria debe ser un número'})
+    @Type(() => Number)
+    @IsInt({ message: "La cantidad debe ser un número" })
     categoria_id?: number
 
     @IsOptional()
-    @IsNumberString({}, {message: 'La cantidad debe ser un número'})
-    take: number
+    @Type(() => Number)
+    @IsInt({ message: "La cantidad debe ser un número" })
+    @Min(1)
+    take?: number
 
     @IsOptional()
-    @IsNumberString({}, {message: 'La cantidad debe ser un número'})
-    skip: number
+    @Type(() => Number)
+    @IsInt({ message: "La cantidad debe ser un número" })
+    skip?: number
+
+    @IsOptional()
+    @IsString()
+    q?: string; // texto a buscar
 }

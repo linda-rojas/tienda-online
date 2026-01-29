@@ -28,8 +28,9 @@ export class ProductosController {
     const categoria = query.categoria_id ? query.categoria_id : null
     const take = query.take ? query.take : 8
     const skip = query.skip ? query.skip : 0
+    const q = query.q?.trim() || null
 
-    return this.productosService.findAll(categoria, take, skip);
+    return this.productosService.findAll(categoria, take, skip, q);
   }
 
   @Get(':id')
