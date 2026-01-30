@@ -46,7 +46,7 @@ export default function RegisterStep3({ data, onBack, onConfirm }: Props) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
             >
-                <div className="w-fit bg-blue-600 text-white px-3 py-1 rounded-md shadow-md text-sm font-semibold">
+                <div className="w-fit bg-blue-800 text-white px-3 py-1 rounded-md shadow-md text-sm font-semibold">
                     Revisión final
                 </div>
 
@@ -62,7 +62,6 @@ export default function RegisterStep3({ data, onBack, onConfirm }: Props) {
                                 <li><strong>Nombre:</strong> {data.nombre} {data.apellidos}</li>
                                 <li><strong>Correo:</strong> {data.correo}</li>
                                 <li><strong>Celular:</strong> {data.celular}</li>
-                                <li><strong>Rol:</strong> Usuario</li>
                             </ul>
                         </div>
                     </section>
@@ -114,8 +113,8 @@ export default function RegisterStep3({ data, onBack, onConfirm }: Props) {
                         onClick={handleConfirm}
                         disabled={loading}
                         className={`py-2 px-2 lg:py-2 lg:px-3 rounded-lg text-white font-semibold flex items-center justify-center transition-all duration-300 cursor-pointer text-[14px] lg:text-[15px] ${loading
-                            ? 'bg-green-500 cursor-not-allowed opacity-80'
-                            : 'bg-green-600 hover:bg-green-700 hover:scale-105'
+                            ? 'bg-blue-800 cursor-not-allowed opacity-80'
+                            : 'bg-blue-900 hover:bg-green-800 hover:scale-105'
                             }`}
                     >
                         {loading ? (

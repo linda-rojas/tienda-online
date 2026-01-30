@@ -7,6 +7,13 @@ import { loginUser } from '@/services/loginUser/loginUser';
 import { validateEmail, validatePassword } from '@/services/loginUser/validation';
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
+// Toast con nombre en semibold
+const welcomeToast = (name: string) => (
+  <span>
+    ¡Bienvenid@{name ? <> <span className="font-semibold">{name}</span></> : ''}! Serás redirigido a la tienda
+  </span>
+);
+
 const getUserName = (u: any) => {
   const name = u?.nombre || u?.user?.nombre || '';
   return String(name).trim();
@@ -46,7 +53,7 @@ const LoginForm = () => {
     // 🚨 Si no hay token o usuario → no redirigir (mostrar login)
     if (!storedUser || !token) return;
 
-    // ✅ Verificar si el token está expirado antes de redirigir
+    // Verificar si el token está expirado antes de redirigir
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       const expMs = payload.exp * 1000;
@@ -66,17 +73,17 @@ const LoginForm = () => {
           ? parsedUser.role.toLowerCase()
           : parsedUser.role?.nombre?.toLowerCase();
 
-      // ✅ Redirigir según el rol
+      // Redirigir según el rol
       if (role === 'administrador') {
         toast.success('Bienvenido administrador 👑', {
           onClose: () => {
             setTimeout(() => {
-              window.location.href = '/admin/sales'; // Redirigir a /admin/sales
+              window.location.href = '/admin/sales';
             }, 800);
           },
         });
       } else {
-        toast.success(`¡Bienvenid@${name ? ` ${name}` : ''}! Serás redirigido a la tienda`, {
+        toast.success(welcomeToast(name), {
           onClose: () => {
             setTimeout(() => {
               window.location.href = '/';
@@ -154,7 +161,7 @@ const LoginForm = () => {
           },
         });
       } else {
-        toast.success(`¡Bienvenid@${name ? ` ${name}` : ''}! Serás redirigido a la tienda`, {
+        toast.success(welcomeToast(name), {
           onClose: () => {
             setTimeout(() => {
               window.location.href = '/';

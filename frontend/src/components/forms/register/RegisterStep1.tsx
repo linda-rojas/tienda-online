@@ -233,7 +233,7 @@ export default function RegisterStep1({
                     onClick={handleNext}
                     disabled={!isValid || checkingEmail} // 👈 no deja avanzar mientras verifica
                     className={`py-2 px-2 lg:py-2 lg:px-3 cursor-pointer rounded-lg text-white font-semibold transition-all duration-300 ${isValid && !checkingEmail
-                        ? 'bg-blue-600 hover:scale-105'
+                        ? 'bg-blue-800 hover:scale-105'
                         : 'bg-gray-400 cursor-not-allowed'
                         }`}
                 >

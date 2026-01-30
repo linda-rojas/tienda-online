@@ -1,5 +1,5 @@
 'use client'
-import { departamentos } from '@/utils/colombiaData'
+import { departamentos, getCiudadesByDepartamento } from '@/utils/colombiaData'
 import { Address } from '@/schemas/schemas'
 import { useEffect, useState } from 'react'
 
@@ -17,9 +17,7 @@ export default function RegisterStep2({
     onSubmit,
 }: Props) {
     const address = data.direcciones[0]
-    const selectedDept = departamentos.find(
-        (d) => d.departamento === address.departamento
-    )
+    const ciudades = getCiudadesByDepartamento(address.departamento)
 
     const [touched, setTouched] = useState<Record<keyof Address, boolean>>({
         departamento: false,
@@ -133,14 +131,14 @@ export default function RegisterStep2({
                         onBlur={() =>
                             setTouched((prev) => ({ ...prev, ciudad: true }))
                         }
-                        disabled={!selectedDept}
+                        disabled={!ciudades}
                         className={`border text-gray-700 p-2 rounded-lg outline-none w-full focus:ring-2 ${errors.ciudad && touched.ciudad
                             ? 'border-red-500'
                             : 'focus:ring-blue-500 border-gray-500'
                             }`}
                     >
                         <option value="">Seleccione una ciudad</option>
-                        {selectedDept?.ciudades.map((c) => (
+                        {ciudades?.map((c) => (
                             <option key={c} value={c}>
                                 {c}
                             </option>
@@ -217,7 +215,7 @@ export default function RegisterStep2({
                     onClick={handleNext}
                     className={`py-2 px-2 lg:py-2 lg:px-3 cursor-pointer text-[14px] lg:text-[15px] rounded-lg text-white font-semibold transition-all duration-300 ${Object.values(errors).some((e) => e !== '')
                         ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:scale-105'
+                        : 'bg-blue-800 hover:scale-105'
                         }`}
                 >
                     Confirmar
