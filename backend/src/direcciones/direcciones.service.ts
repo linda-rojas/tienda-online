@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDireccioneDto } from './dto/create-direccione.dto';
 import { UpdateDireccioneDto } from './dto/update-direccione.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,10 +12,13 @@ export class DireccionesService {
     private readonly direccionesRepository: Repository<Direccione>
   ) { }
 
-  async create(createDireccioneDto: CreateDireccioneDto, userId: number) {
-    const { ...address } = createDireccioneDto;
+  async create(dto: CreateDireccioneDto, userId: number) {
+    if (!userId) {
+      throw new BadRequestException('userId es requerido');
+    }
+
     const newDireccion = this.direccionesRepository.create({
-      ...createDireccioneDto,
+      ...dto,
       usuario: { id: userId },
     });
 

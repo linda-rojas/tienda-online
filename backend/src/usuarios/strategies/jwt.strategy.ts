@@ -5,10 +5,10 @@ import { JwtPayload } from "../interfaces/jwt-payload.interface";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ConfigService } from "@nestjs/config";
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     constructor(
         @InjectRepository(Usuario) private readonly usuarioRepository: Repository<Usuario>,
         configService: ConfigService
@@ -19,15 +19,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         });
     }
 
-    async validate(payload: JwtPayload): Promise<Usuario> {
-        console.log('Tipo de ID:', typeof payload.id);
-        const { id } = payload;
+    async validate(payload: JwtPayload) {
+        const id = Number(payload.id);
+
+        if (!id || Number.isNaN(id)) {
+            throw new UnauthorizedException('Token inválido (id no válido)');
+        }
+
         const user = await this.usuarioRepository.findOne({
-            where: { id: id },
-            relations: ['role']
+            where: { id },
+            relations: ['role'],
         });
 
-        if (!user) throw new Error('Token no válido - usuario no existe');
-        return user;
+        if (!user) {
+            throw new UnauthorizedException('Token no válido - usuario no existe');
+        }
+
+        return user; // esto se inyecta en req.user
     }
 }
