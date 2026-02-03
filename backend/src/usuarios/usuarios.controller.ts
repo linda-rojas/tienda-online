@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpCode, HttpStatus, UseInterceptors, BadRequestException, UploadedFile } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
@@ -13,6 +13,8 @@ import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
 import { RequestPasswordResetDto } from 'src/mailer/dto/request-password-reset.dto';
 import { ResetPasswordDto } from 'src/mailer/dto/reset-password.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -46,7 +48,7 @@ export class UsuariosController {
   }
 
   @Post('crear-admin')
-  @UseGuards(AuthGuard(), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('administrador')
   createAdmin(@Body() dto: CreateUsuarioDto) {
     return this.usuariosService.createAdmin(dto);
@@ -70,7 +72,7 @@ export class UsuariosController {
   }
 
   @Get('administrador')
-  @UseGuards(AuthGuard(), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('administrador')
   adminOnlyRoute(@GetUser() user: Usuario) {
     return {
@@ -80,7 +82,7 @@ export class UsuariosController {
   }
 
   @Get('privado')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   testingPrivateRoute(
     @Req() request: Express.Request,
     @GetUser() user: Usuario,
@@ -94,6 +96,31 @@ export class UsuariosController {
       userEmail,
       rawHeaders
     };
+  }
+
+  // subir avatar (multipart/form-data)
+  @Patch('avatar')
+  @UseGuards(AuthGuard('jwt')) // jwt
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: memoryStorage(),
+      limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
+      fileFilter: (_req, file, cb) => {
+        if (!file.mimetype.startsWith('image/')) {
+          return cb(new BadRequestException('El archivo debe ser una imagen'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async uploadAvatar(
+    @GetUser() user: Usuario,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    console.log('FILE:', file?.originalname, file?.mimetype, file?.size);
+    console.log('USER:', user?.id);
+    return this.usuariosService.updateAvatar(user.id, file);
+
   }
 
   @Patch(':id')

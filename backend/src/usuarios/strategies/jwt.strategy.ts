@@ -14,7 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         configService: ConfigService
     ) {
         super({
-            secretOrKey: configService.get('JWT_SECRET') || 'defaultSecretKey',
+            secretOrKey: configService.getOrThrow('JWT_SECRET'),
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
         });
     }
@@ -35,6 +35,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
             throw new UnauthorizedException('Token no válido - usuario no existe');
         }
 
-        return user; // esto se inyecta en req.user
+        return user;
     }
 }

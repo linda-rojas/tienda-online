@@ -15,6 +15,7 @@ import { CustomMailerModule } from 'src/mailer/mailer.module';
 import { ProductosModule } from 'src/productos/productos.module';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { Transaccion } from 'src/transaccions/entities/transaccion.entity';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -25,11 +26,12 @@ import { Transaccion } from 'src/transaccions/entities/transaccion.entity';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),
+        secret: configService.getOrThrow('JWT_SECRET'),
         signOptions: { expiresIn: '1h' },
       })
     }),
     CustomMailerModule,
+    CloudinaryModule,
   ],
   controllers: [UsuariosController],
   providers: [

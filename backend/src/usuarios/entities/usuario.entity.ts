@@ -25,6 +25,12 @@ export class Usuario implements UserInterface {
   @Column({ type: 'text', nullable: false, select: false })
   contrasena: string;
 
+  @Column({ type: 'text', nullable: true })
+  avatarUrl: string | null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  avatarPublicId: string | null;
+
   @OneToMany(() => Direccione, (direccion) => direccion.usuario, { cascade: true })
   direcciones: Direccione[];
 

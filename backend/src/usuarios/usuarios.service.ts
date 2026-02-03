@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Transaccion } from 'src/transaccions/entities/transaccion.entity';
@@ -15,6 +15,7 @@ import { PasswordResetService } from './services/password-reset.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { comparePasswords, hashPassword } from 'src/utils/bycript.util';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsuariosService {
@@ -26,7 +27,8 @@ export class UsuariosService {
     @InjectRepository(Transaccion) private readonly transaccionRepository: Repository<Transaccion>,
     @Inject(ValidationService) private readonly validationService: ValidationService,
     private readonly jwtService: JwtService,
-    private readonly passwordResetService: PasswordResetService
+    private readonly passwordResetService: PasswordResetService,
+    private readonly cloudinaryService: CloudinaryService
   ) { }
 
   // Crear usuario con direcciones
@@ -173,7 +175,6 @@ export class UsuariosService {
   }
 
   async resetPassword(token: string, nuevaContrasena: string) {
-    // const hashed = await hashPassword(nuevaContrasena);
     return this.passwordResetService.resetPassword(token, nuevaContrasena);
   }
 
@@ -183,7 +184,6 @@ export class UsuariosService {
     return { exists: !!user };
   }
 
-  // En UsuariosService
   async realizarCompra(usuarioId: number, productos: { productoId: number; cantidad: number }[]): Promise<Transaccion> {
     // Buscar usuario
     const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
@@ -225,7 +225,33 @@ export class UsuariosService {
     // Guardar la nueva transacción (compra)
     await this.transaccionRepository.save(nuevaTransaccion);
 
-    return nuevaTransaccion; // Devolver la transacción creada
+    return nuevaTransaccion;
+  }
+
+  async updateAvatar(userId: number, file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('Debe enviar el archivo "avatar"');
+
+    const user = await this.usuarioRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
+
+    // si tenía avatar anterior, intentamos borrarlo
+    if (user.avatarPublicId) {
+      await this.cloudinaryService.deleteByPublicId(user.avatarPublicId);
+    }
+
+    console.log('updateAvatar userId:', userId);
+
+    const uploaded = await this.cloudinaryService.uploadAvatar(file.buffer, userId);
+
+    user.avatarUrl = uploaded.secure_url;
+    user.avatarPublicId = uploaded.public_id;
+
+    await this.usuarioRepository.save(user);
+
+    return {
+      avatarUrl: user.avatarUrl,
+      avatarPublicId: user.avatarPublicId,
+    };
   }
 
 }
