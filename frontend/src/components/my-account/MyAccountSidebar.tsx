@@ -1,21 +1,84 @@
 'use client';
 
 import Link from 'next/link';
-import { FaUserCircle } from 'react-icons/fa';
+import { FaUserCircle, FaCamera } from 'react-icons/fa';
 import type { ActiveTab } from '@/types/my-account';
+import { useRef } from 'react';
+import type { ChangeEvent } from 'react';
 
 type Props = {
     activeTab: ActiveTab;
     setActiveTab: (t: ActiveTab) => void;
     usuarioNombre: string;
+    avatarUrl?: string | null;
+    uploadingAvatar?: boolean;
+    onUploadAvatar?: (file: File) => Promise<void>;
 };
 
-export default function MyAccountSidebar({ activeTab, setActiveTab, usuarioNombre }: Props) {
+export default function MyAccountSidebar({
+    activeTab,
+    setActiveTab,
+    usuarioNombre,
+    avatarUrl,
+    uploadingAvatar,
+    onUploadAvatar,
+}: Props) {
+
+    const fileRef = useRef<HTMLInputElement | null>(null);
+
+    const pickFile = () => fileRef.current?.click();
+
+    const onFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !onUploadAvatar) return;
+
+        await onUploadAvatar(file);
+        e.target.value = '';
+    };
+
     return (
         <div className="w-[50%] bg-white text-white shadow-lg p-4 sm:p-6 lg:p-6 rounded-l-lg color-blue-footer-bg">
+            {/* avatar con overlay */}
             <div className="flex justify-center mb-6">
-                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-4xl text-gray-600">
-                    <FaUserCircle />
+                <div className="relative">
+                    <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center text-4xl text-gray-600">
+                        {avatarUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                                src={avatarUrl}
+                                alt="Avatar"
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <FaUserCircle />
+                        )}
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={pickFile}
+                        disabled={uploadingAvatar}
+                        className="
+                        absolute -bottom-1 -right-1
+                        w-9 h-9 rounded-full
+                        bg-blue-900 text-white
+                        flex items-center justify-center
+                        shadow-lg
+                        hover:bg-blue-950 transition
+                        disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer
+                        "
+                        title="Cambiar foto"
+                    >
+                        <FaCamera className="text-sm" />
+                    </button>
+
+                    <input
+                        ref={fileRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={onFileChange}
+                    />
                 </div>
             </div>
 
@@ -59,6 +122,7 @@ export default function MyAccountSidebar({ activeTab, setActiveTab, usuarioNombr
                         localStorage.removeItem('token');
                         document.cookie = 'token=; Max-Age=0; path=/';
                         document.cookie = 'role=; Max-Age=0; path=/';
+                        location.href = '/admin/login';
                     }}
                 >
                     Cerrar sesión
