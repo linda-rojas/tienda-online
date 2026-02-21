@@ -2,7 +2,7 @@ import { ConfigService } from "@nestjs/config";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { entities } from "./entities.config";
 
-export const typeOrmConfig = (configService: ConfigService) : TypeOrmModuleOptions  => {
+export const typeOrmConfig = (configService: ConfigService): TypeOrmModuleOptions => {
     const useSSL = configService.get('DATABASE_USE_SSL') === 'true';
     const config: TypeOrmModuleOptions = {
         type: 'postgres',
@@ -13,15 +13,15 @@ export const typeOrmConfig = (configService: ConfigService) : TypeOrmModuleOptio
         database: configService.get('DATABASE_NAME'),
         ssl: useSSL,
         extra: useSSL
-        ? {
-            ssl: {
-            rejectUnauthorized: false,
-            },
-        }
-        : {},
+            ? {
+                ssl: {
+                    rejectUnauthorized: false,
+                },
+            }
+            : {},
         logging: true,
         entities,
-        synchronize: true
+        synchronize: false
     }
     return config;
 }

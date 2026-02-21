@@ -1,109 +1,28 @@
-import { ConflictException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from './entities/producto.entity';
-import { FindManyOptions, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Categoria } from '../categorias/entities/categoria.entity';
 import { ValidationService } from 'src/services/validation.service';
 import { Imagen } from './entities/imagenes.entity';
+import { v2 as cloudinary } from 'cloudinary';
 import { UploadImageService } from 'src/upload-image/upload-image.service';
-import { UploadImageRequest } from 'src/upload-image/upload-image-request.interface';
+import { UploadImageRequest } from 'src/upload-image/interfaces/upload-image-request.interface';
 
 @Injectable()
 export class ProductosService {
   constructor(
     @InjectRepository(Producto) private readonly productoRepository: Repository<Producto>,
     @InjectRepository(Categoria) private readonly categoriaRepository: Repository<Categoria>,
+    @InjectRepository(Imagen) private readonly imagenRepo: Repository<Imagen>,
     @Inject(forwardRef(() => UploadImageService))
     private readonly uploadImageService: UploadImageService,
     @Inject(ValidationService) private readonly validationService: ValidationService
 
   ) { }
 
-  // async create(createProductoDto: CreateProductoDto) {
-  //   try {
-  //     const categoria = await this.categoriaRepository.findOneBy({ id: createProductoDto.categoriaId as unknown as number });
-  //     // si no existe ese id retorna:
-  //     if (!categoria) {
-  //       throw new NotFoundException('la categoria no existe');
-  //     }
-
-  //     // Verificar si ya existe un producto con el mismo nombre
-  //     await this.validationService.existsOrFail(
-  //       this.productoRepository,
-  //       'nombre',
-  //       createProductoDto.nombre,
-  //       'El nombre del producto ya está en uso'
-  //     );
-
-  //     const producto = this.productoRepository.create({
-  //       ...createProductoDto,
-  //       categoria,
-  //       // imagenes: []
-  //     })
-
-  //     if (createProductoDto.imagenesUrl && createProductoDto.imagenesUrl.length > 0) {
-  //       const imagenes = createProductoDto.imagenesUrl.map((imagenUrl) => {
-  //         const imagen = new Imagen();
-  //         imagen.url = imagenUrl;
-  //         imagen.producto = producto;
-  //         return imagen;
-  //       });
-
-  //       producto.imagenes = imagenes;
-  //     }
-
-  //     const productoGuardado = await this.productoRepository.save(producto);
-
-  //     return productoGuardado;
-  //   } catch (error) {
-  //     this.validationService.handleExceptions(error)
-  //   }
-  // }
-
-  // async create(createProductoDto: CreateProductoDto) {
-  //   try {
-  //     const categoria = await this.categoriaRepository.findOneBy({ id: createProductoDto.categoriaId });
-
-  //     if (!categoria) {
-  //       throw new NotFoundException('La categoría no existe');
-  //     }
-
-  //     // Verificar si el producto ya existe
-  //     await this.validationService.existsOrFail(
-  //       this.productoRepository,
-  //       'nombre',
-  //       createProductoDto.nombre,
-  //       'El nombre del producto ya está en uso'
-  //     );
-
-  //     // Crear el producto
-  //     const producto = this.productoRepository.create({
-  //       ...createProductoDto,
-  //       categoria, // Asignamos la categoría
-  //     });
-
-  //     // Crear instancias de `Imagen` a partir de las URLs
-  //     // if (createProductoDto.imagenesUrl && createProductoDto.imagenesUrl.length > 0) {
-  //     //   const imagenes = createProductoDto.imagenesUrl.map((url) => {
-  //     //     const imagen = new Imagen();
-  //     //     imagen.url = url;
-  //     //     imagen.producto = producto; // Asociamos la imagen al producto
-  //     //     return imagen;
-  //     //   });
-
-  //     //   producto.imagenes = imagenes; // Asignamos las imágenes al producto
-  //     // }
-
-  //     // Guardar el producto con las imágenes asociadas
-  //     const productoGuardado = await this.productoRepository.save(producto);
-
-  //     return productoGuardado; // Devolvemos el producto guardado
-  //   } catch (error) {
-  //     this.validationService.handleExceptions(error);
-  //   }
-  // }
 
   async create(createProductoDto: CreateProductoDto, uploadImages?: UploadImageRequest[]) {
     try {
@@ -158,7 +77,6 @@ export class ProductosService {
       }
 
       if (q) {
-        // Postgres: ILIKE para case-insensitive
         qb.andWhere(
           "(p.nombre ILIKE :q OR p.subtitulo ILIKE :q OR p.descripcion ILIKE :q)",
           { q: `%${q}%` }
@@ -190,65 +108,34 @@ export class ProductosService {
     return producto;
   }
 
-  // actualiza productos
-  // async update(id: number, updateProductoDto: UpdateProductoDto) {
-  //   try {
-  //     const productoExistente = await this.findOne(id);
-
-  //     if (updateProductoDto.categoriaId) {
-  //       const categoria = await this.categoriaRepository.findOneBy({ id: updateProductoDto.categoriaId as unknown as number });
-  //       // si no existe categoria con ese id retorna:
-  //       if (!categoria) {
-  //         throw new NotFoundException('la categoria no existe');
-  //       }
-  //       productoExistente.categoria = categoria
-  //     }
-
-  //     if (updateProductoDto.nombre && updateProductoDto.nombre !== productoExistente.nombre) {
-  //       // console.log(updateProductoDto.nombre)
-  //       await this.validationService.existsOrFail(
-  //         this.productoRepository,
-  //         'nombre',
-  //         updateProductoDto.nombre,
-  //         'El nombre del producto ya está en uso'
-  //       );
-  //     }
-
-  //     const imagenes = updateProductoDto.imagenesUrl.map(imagenUrl => {
-  //       const imagen = new Imagen();
-  //       imagen.producto = productoExistente;
-  //       imagen.url = imagenUrl;
-  //       return imagen;
-  //     });
-
-  //     const producto = await this.productoRepository.preload({
-  //       ...updateProductoDto,
-  //       id,
-  //       imagenes,
-  //     });
-
-  //     if (!producto) {
-  //       throw new NotFoundException(`El producto con el id: ${id} no fue encontrado`)
-  //     }
-
-  //     return await this.productoRepository.save(producto);
-
-  //   } catch (error) {
-  //     this.validationService.handleExceptions(error)
-  //   }
-  // }
-
   async update(id: number, updateProductoDto: UpdateProductoDto, uploadImages?: UploadImageRequest[]) {
     try {
       const productoExistente = await this.findOne(id);
 
+      // Verificar si la categoría existe y actualizarla
       if (updateProductoDto.categoriaId) {
         const categoria = await this.categoriaRepository.findOneBy({ id: updateProductoDto.categoriaId });
-
         if (!categoria) {
           throw new NotFoundException('La categoría no existe');
         }
         productoExistente.categoria = categoria;
+      }
+
+      // Verificar las imágenes existentes del producto
+      const existingImages = productoExistente.imagenes;
+      const hasPrimary = existingImages.some((img) => img.type === 'primary');
+      const hasSecondary = existingImages.some((img) => img.type === 'secondary');
+
+      // Cambiar tipo de las nuevas imágenes a 'gallery' si ya existe un 'primary' o 'secondary'
+      if (uploadImages && uploadImages.length > 0) {
+        uploadImages.forEach((img) => {
+          if (img.type === 'primary' && hasPrimary) {
+            img.type = 'gallery'; // Si ya existe un 'primary', cambiar a 'gallery'
+          }
+          if (img.type === 'secondary' && hasSecondary) {
+            img.type = 'gallery'; // Si ya existe un 'secondary', cambiar a 'gallery'
+          }
+        });
       }
 
       const producto = await this.productoRepository.preload({
@@ -262,12 +149,12 @@ export class ProductosService {
 
       const productoActualizado = await this.productoRepository.save(producto);
 
-      // Subir y asociar nuevas imágenes (si llegan)
+      // Subir nuevas imágenes si llegan
       if (uploadImages && uploadImages.length > 0) {
         await this.uploadImageService.uploadFiles(uploadImages, productoActualizado.id);
       }
 
-      // Retornar el producto con sus relaciones actualizadas
+      // Retornar el producto con las imágenes actualizadas
       return this.findOne(productoActualizado.id);
 
     } catch (error) {
@@ -276,9 +163,28 @@ export class ProductosService {
   }
 
 
-  async remove(id: number) {
-    const producto = await this.findOne(id)
-    await this.productoRepository.remove(producto)
-    return { message: 'Producto eliminado con éxito' };
+
+  async remove(productoId: number) {
+    const producto = await this.productoRepository.findOne({
+      where: { id: productoId },
+      relations: ['imagenes'],
+    });
+
+    if (!producto) throw new NotFoundException('Producto no encontrado');
+
+    // 1) borrar en Cloudinary (si tienes publicId)
+    const publicIds = (producto.imagenes || [])
+      .map((img) => img.publicId)
+      .filter(Boolean);
+
+    if (publicIds.length) {
+      // borra uno por uno (seguro)
+      await Promise.all(publicIds.map((id) => cloudinary.uploader.destroy(id)));
+    }
+
+    // 2) borrar producto (y DB elimina imágenes por cascade)
+    await this.productoRepository.delete({ id: productoId });
+
+    return { ok: true };
   }
 }

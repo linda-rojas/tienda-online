@@ -8,10 +8,11 @@ import { ValidationService } from 'src/services/validation.service';
 import { UploadImageModule } from 'src/upload-image/upload-image.module';
 import { Imagen } from './entities/imagenes.entity';
 import { NestjsFormDataModule } from 'nestjs-form-data';
+// import { NestjsFormDataModule } from 'nestjs-form-data';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Producto, Categoria]),
+    TypeOrmModule.forFeature([Producto, Categoria, Imagen]),
     forwardRef(() => UploadImageModule),
     NestjsFormDataModule.config({ autoDeleteFile: true }), // Limpia los archivos temporales
   ],

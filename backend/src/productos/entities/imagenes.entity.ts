@@ -1,5 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { Producto } from './producto.entity'; // Relación con Producto
+import { Producto } from './producto.entity';
+
+export type ImageType = 'primary' | 'secondary' | 'gallery';
 
 @Entity({ name: 'imagenes' })
 export class Imagen {
@@ -9,10 +11,13 @@ export class Imagen {
     @Column({ type: 'varchar', length: 255 })
     url: string;
 
-    @Column({ type: 'varchar', length: 255 })
-    type: string;
+    @Column({ type: 'varchar', length: 20 })
+    type: ImageType;
 
-    // primary | secondary | gallery
+
+    @Column({ nullable: true })
+    publicId: string;
+
 
     @ManyToOne(() => Producto, (producto) => producto.imagenes, {
         onDelete: 'CASCADE'

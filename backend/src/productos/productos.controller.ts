@@ -17,9 +17,6 @@ export class ProductosController {
   async create(
     @Body() createProductoDto: CreateProductoDto,
   ) {
-    // Si vienen imágenes en la petición multipart, se procesarán automáticamente
-    // por nestjs-form-data, pero como tu UploadImageService usa UploadImageRequest[],
-    // las enviaremos en otro endpoint si lo deseas (ver más abajo).
     return this.productosService.create(createProductoDto);
   }
 

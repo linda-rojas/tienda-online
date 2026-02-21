@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform, BadRequestException, Logger } from '@nestjs/common';
 import { Express } from 'express';
-import { UploadImageRequest } from './upload-image-request.interface';
+import { UploadImageRequest } from './interfaces/upload-image-request.interface';
 
 @Injectable()
 export class ValidateUploadImageRequestPipe implements PipeTransform {
