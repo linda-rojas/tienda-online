@@ -3,7 +3,8 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { Product } from '@/schemas/schemas'
 import Link from 'next/link'
-import Skeleton from '../skeletons/Skeleton'
+import Skeleton from '../../skeletons/Skeleton'
+
 
 export default function ProductImage({ product }: { product: Product }) {
     const [hovered, setHovered] = useState(false)

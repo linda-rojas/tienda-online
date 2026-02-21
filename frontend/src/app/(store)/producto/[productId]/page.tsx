@@ -1,7 +1,7 @@
 import AddProductButton from '@/components/ui/products/AddProductButton'
 import { formatCOP } from '@/utils/format-currency'
 import { getProduct, getCategory } from '@/services/categories/categories.service'
-import ProductImageDisplay from '@/components/ui/products/ProductImageDisplay'
+import ProductImageDisplay from '@/components/ui/products/image/ProductImageDisplay'
 import HeaderServer from '@/components/ui/mainNav/HeaderServer'
 import FooterServer from '@/components/footer/foooterServer'
 
@@ -13,7 +13,7 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
     const category = await getCategory(product.categoriaId)
 
     const images = (product.imagenes ?? []).map(img => ({
-        url: img.url ?? '/product-notFound.png',  // Aseguramos que la URL no sea nula
+        url: img.url ?? '/product-notFound.png',
         type: img.type ?? 'primary',
     }));
 

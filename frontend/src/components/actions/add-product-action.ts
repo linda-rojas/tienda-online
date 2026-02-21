@@ -1,12 +1,15 @@
 'use server'
-import { AddProductFormSchema, ErrorResponseSchema, ProductFormSchema } from "@/schemas/schemas"
+import { AddProductFormSchema, ErrorResponseSchema } from "@/schemas/schemas"
 
 type ActionStateType = {
     errors: string[],
-    success: string
+    success: string,
+    productId?: number
 }
 
 export async function addProduct(prevState: ActionStateType, formData: FormData) {
+
+    console.log(Object.fromEntries(formData.entries()))
 
     const product = AddProductFormSchema.safeParse({
         nombre: formData.get('nombre'),
@@ -15,7 +18,7 @@ export async function addProduct(prevState: ActionStateType, formData: FormData)
         precio: formData.get('precio'),
         stock: formData.get('stock'),
         descuento: formData.get('descuento'),
-        categoriaId: formData.get('categoryId')
+        categoriaId: formData.get('categoriaId')
     })
 
     if (!product.success) {
@@ -39,41 +42,15 @@ export async function addProduct(prevState: ActionStateType, formData: FormData)
         const errors = ErrorResponseSchema.parse(json)
         return {
             errors: errors.message.map(issue => issue),
-            success: 'Producto Agregado Correctamente'
+            success: '',
+
         }
-    }
-
-    const productId = json.id
-
-    // 🟢 2. Asociar imágenes (campo oculto del formulario)
-    const hasOneImage = formData.get('images[0][type]')
-
-    console.log('file', formData.get('images[0][file]'));
-
-
-    if (hasOneImage) {
-        const requestImages = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/upload-images/${productId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'multipart/form-data' },
-            body: formData,
-        })
-
-        const responseImages = await requestImages.json()
-
-        if (!requestImages.ok) {
-            return {
-                errors: [
-                    'Error al subir las imágenes',
-                ],
-                success: ''
-            }
-        }
-
-        console.log(responseImages);
     }
 
     return {
         errors: [],
-        success: ''
+        success: 'Producto creado con Exito será redirigido a crear la imágenes ✅',
+        productId: json.id,
     }
+
 }

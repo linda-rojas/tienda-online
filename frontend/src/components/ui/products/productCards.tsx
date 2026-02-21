@@ -1,7 +1,8 @@
 import { Product } from '@/schemas/schemas'
 import { formatCOP } from '@/utils/format-currency'
-import ProductImage from './ProductImage'
+
 import AddProductButton from './AddProductButton'
+import ProductImage from './image/ProductImage'
 
 export default function ProductCard({ product }: { product: Product }) {
     return (

@@ -1,4 +1,5 @@
 'use server'
+
 import { ErrorResponseSchema, Product, ProductFormSchema } from "@/schemas/schemas"
 
 type ActionStateType = {
@@ -6,18 +7,29 @@ type ActionStateType = {
     success: string
 }
 
-export async function UpdateProduct(productId: Product['id'], prevState: ActionStateType, formData: FormData) {
+const ProductPayloadSchema = ProductFormSchema.omit({
+    id: true,
+    imagenes: true,
+})
 
-    const product = ProductFormSchema.safeParse({
-        name: formData.get('nombre'),
-        price: formData.get('precio'),
-        inventory: formData.get('stock'),
-        categoryId: formData.get('categoriaId')
+export async function UpdateProduct(
+    productId: Product['id'],
+    prevState: ActionStateType,
+    formData: FormData
+) {
+    const payload = ProductPayloadSchema.safeParse({
+        nombre: formData.get('nombre'),
+        subtitulo: formData.get('subtitulo'),
+        descripcion: formData.get('descripcion'),
+        precio: formData.get('precio'),
+        stock: formData.get('stock'),
+        descuento: formData.get('descuento'),
+        categoriaId: formData.get('categoriaId'),
     })
 
-    if (!product.success) {
+    if (!payload.success) {
         return {
-            errors: product.error.issues.map(issue => issue.message),
+            errors: payload.error.issues.map(issue => issue.message),
             success: ''
         }
     }
@@ -25,24 +37,19 @@ export async function UpdateProduct(productId: Product['id'], prevState: ActionS
     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/productos/${productId}`
     const req = await fetch(url, {
         method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(product.data),
-    });
-    const json = await req.json()
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload.data),
+    })
+
+    const json = await req.json().catch(() => ({}))
 
     if (!req.ok) {
         const errors = ErrorResponseSchema.parse(json)
         return {
-            errors: errors.message.map(issue => issue),
-            success: 'Producto Actualizado Correctamente'
+            errors: errors.message.map((m) => m),
+            success: ''
         }
     }
 
-
-    return {
-        errors: [],
-        success: ''
-    }
+    return { errors: [], success: 'Producto Actualizado Correctamente ✅' }
 }

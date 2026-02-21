@@ -1,4 +1,4 @@
-import EditProductForm from "@/components/ui/products/EditProductForm";
+import EditProductForm from "@/components/ui/products/CRUD/EditProductForm";
 import ProductForm from "@/components/ui/products/ProductForm";
 import AdminNav from "@/components/ui/admin/panelAdmin/AdminNav";
 import Heading from "@/components/ui/admin/panelAdmin/Heading";
@@ -8,7 +8,7 @@ import { notFound } from "next/navigation";
 
 async function getProduct(id: string) {
     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/productos/${id}`
-    const req = await fetch(url)
+    const req = await fetch(url, { cache: 'no-store' })
     const json = await req.json()
 
     if (!req.ok) {

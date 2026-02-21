@@ -1,24 +1,19 @@
+
 import z from "zod";
 
 // ===============================
 // 🔳 IMAGENES
 // ===============================
 
+export const ImageTypeSchema = z.enum(["primary", "secondary", "gallery"]);
+
 export const ImageSchema = z.object({
+    id: z.coerce.number(),
     url: z.string(), // ← ya no usamos .url() para permitir rutas relativas o absolutas
-    type: z.string().transform(t => {
-        const normalized = t.toLowerCase();
-
-        if (['primary', 'secondary', 'gallery'].includes(normalized)) {
-            return normalized;
-        }
-
-        // fallback si viene algo raro
-        return 'primary';
-    })
+    type: ImageTypeSchema,
 });
 
-export const ImagesSchema = z.array(ImageSchema).default([]);
+export const ImagesSchema = z.array(ImageSchema);
 
 
 // ===============================
@@ -34,7 +29,7 @@ export const ProductSchema = z.object({
     descuento: z.coerce.number().nullable().optional(),
     stock: z.coerce.number(),
     categoriaId: z.coerce.number(),
-    imagenes: ImagesSchema.optional(),
+    imagenes: ImagesSchema.optional().default([]),
 })
 
 export const ProductResponseSchema = z.object({

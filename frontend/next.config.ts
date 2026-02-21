@@ -1,6 +1,6 @@
 import type { NextConfig } from 'next'
 
-/** @type {import('next').NextConfig} */
+// /** @type {import('next').NextConfig} **/
 const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
@@ -14,7 +14,12 @@ const nextConfig: NextConfig = {
             },
         ],
     },
+    experimental: {
+        serverActions: {
+            bodySizeLimit: '20mb', // puedes subir a 50mb si lo necesitas
+        },
+    },
 }
 
-module.exports = nextConfig;
+// module.exports = nextConfig;
 export default nextConfig

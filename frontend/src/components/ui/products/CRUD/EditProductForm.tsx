@@ -1,9 +1,9 @@
 'use client'
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from 'next/navigation';
 import { useParams } from "next/navigation";
-import { UpdateProduct } from "../../actions/update-product-action";
+import { UpdateProduct } from "../../../actions/update-product-action";
 
 
 export default function EditProductForm({ children }: { children: React.ReactNode }) {
@@ -18,14 +18,12 @@ export default function EditProductForm({ children }: { children: React.ReactNod
     })
 
     useEffect(() => {
-        if (state.errors) {
-            state.errors.forEach(error => toast.error(error))
-        }
+        if (state.errors?.length) state.errors.forEach(error => toast.error(error))
         if (state.success) {
-            toast.success(state.success)
-            router.push('/admin/sales/products')
+            toast.success(state.success, { autoClose: 2000 })
+            router.refresh()
         }
-    }, [state])
+    }, [state, router])
 
     return (
         <form

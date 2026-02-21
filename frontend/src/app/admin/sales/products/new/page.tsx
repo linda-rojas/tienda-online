@@ -1,10 +1,22 @@
-import AddProductForm from "@/components/ui/products/AddProductForm";
-import ProductForm from "@/components/ui/products/ProductForm";
 import AdminNav from "@/components/ui/admin/panelAdmin/AdminNav";
 import Heading from "@/components/ui/admin/panelAdmin/Heading";
 import Link from "next/link";
+import ProductWizardWrapper from "@/components/forms/productsPanelAdmin/ProductWizardWrapper";
+import { CategoriesResponseSchemas } from "@/schemas/schemas";
+import ProductWizardCreateModal from "@/components/forms/productsPanelAdmin/ProductWizardCreateModal";
 
-export default function NewProductsPage() {
+async function getCategories() {
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/categorias`
+    const req = await fetch(url)
+    const json = await req.json()
+    return CategoriesResponseSchemas.parse(json)
+}
+
+
+export default async function NewProductsPage() {
+
+    const categories = await getCategories()
+
     return (
         <>
             <div className="bg-gray-100">
@@ -19,9 +31,7 @@ export default function NewProductsPage() {
                         </Link>
                         <Heading>Nuevo producto</Heading>
 
-                        <AddProductForm>
-                            <ProductForm />
-                        </AddProductForm>
+                        <ProductWizardCreateModal categories={categories} />
                     </div>
                 </div>
             </div>

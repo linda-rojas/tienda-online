@@ -19,8 +19,6 @@ export default function RootLayout({
         <html lang="en">
             <body className={`${roboto} ${montserrat} antialiased`}>
                 <main>{children}</main>
-                {/* <HeaderServer /> */}
-                <ToastNotification />
             </body>
         </html>
     )

@@ -10,7 +10,7 @@ export default function Login({ pageProps, categories }: { pageProps: any; categ
       <div className="bg-gray-50 shadow w-full mx-auto p-0 lg:w-3/6 items-center mt-28">
         <LoginForm {...pageProps} />
       </div>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
     </div>
   );
 }

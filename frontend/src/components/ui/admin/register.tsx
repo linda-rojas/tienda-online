@@ -12,7 +12,7 @@ export default function Register() {
                 </h2>
                 <RegisterWizard />
             </div>
-            <ToastContainer />
+            {/* <ToastContainer /> */}
         </main>
     )
 }

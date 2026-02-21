@@ -1,14 +1,18 @@
-import { ProductForm } from "@/schemas/schemas"
+'use client';
+import { Category, ProductForm } from "@/schemas/schemas"
 import { formatCOP } from "@/utils/format-currency"
 import Image from "next/image"
 import Link from "next/link"
-import DeleteProductForm from "./DeleteProductForm"
+import DeleteProductForm from "./CRUD/DeleteProductForm"
 import { getImagePath } from "@/utils/get-image-path"
+// import { useState } from "react"
 
-export default function ProductsTable({ products }: { products: ProductForm[] }) {
+export default function ProductsTable({ products, categories }: { products: ProductForm[], categories: Category[] }) {
+
 
     return (
         <div className="px-4 sm:px-6 lg:px-8 mt-10">
+
             <div className="mt-8 flow-root ">
                 <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8 bg-white p-5 ">
@@ -61,7 +65,8 @@ export default function ProductsTable({ products }: { products: ProductForm[] })
                                         <td className="relative py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 ">
                                             <div className='flex gap-5 justify-end items-center'>
                                                 <Link className="text-blue-800 hover:text-indigo-800 cursor-pointer"
-                                                    href={`/admin/sales/products/${product.id}/edit`}>
+                                                    href={`/admin/sales/products/${product.id}/edit`}
+                                                >
                                                     Editar <span className="sr-only">, {product.nombre}</span>
                                                 </Link>
 

@@ -144,12 +144,14 @@ const LoginForm = () => {
       const name = getUserName(data);
 
       // 🧠 NUEVO: guardar también en cookies (middleware las usa)
-      document.cookie = `token=${data.token}; path=/; max-age=3600;`; // 1 hora
+      document.cookie = `token=${data.token}; Path=/; Max-Age=3600; SameSite=Lax`;
+
+      // 1 hora
       const role =
         typeof data.role === 'string'
           ? data.role.toLowerCase()
           : data.role?.nombre?.toLowerCase();
-      document.cookie = `role=${role}; path=/; max-age=3600;`;
+      document.cookie = `role=${role}; Path=/; Max-Age=3600; SameSite=Lax`;
 
       // Redirección igual que antes
       if (role === 'administrador') {

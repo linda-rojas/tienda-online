@@ -2,7 +2,7 @@ import ProductsTable from "@/components/ui/products/ProductsTable";
 import AdminNav from "@/components/ui/admin/panelAdmin/AdminNav";
 import Heading from "@/components/ui/admin/panelAdmin/Heading";
 import Pagination from "@/components/ui/Pagination";
-import { ProductResponseSchema } from "@/schemas/schemas";
+import { ProductForm, ProductResponseSchema } from "@/schemas/schemas";
 import { isValidPage } from "@/utils/isValidPage";
 import Link from "next/link";
 import { redirect } from 'next/navigation';
@@ -50,8 +50,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
           <Heading>Administrar Productos</Heading>
 
           <ProductsTable
-            products={products as any}
-          />
+            products={products as any} categories={[]} />
 
           <Pagination
             page={+page}
