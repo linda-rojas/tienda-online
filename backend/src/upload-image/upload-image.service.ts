@@ -42,6 +42,59 @@ export class UploadImageService {
     })
   }
 
+  // async uploadFiles(uploadImages: UploadImageRequest[], productoId: number) {
+  //   if (!uploadImages.length) {
+  //     throw new BadRequestException('No se recibieron imágenes (images[])');
+  //   }
+
+  //   return this.dataSource.transaction(async (manager) => {
+  //     const repo = manager.getRepository(Imagen);
+
+  //     // 1️⃣ Traer imágenes actuales del producto
+  //     const existingImages = await repo.find({
+  //       where: { producto: { id: productoId } as any },
+  //     });
+
+
+  //     // No se eliminan las imágenes actuales, simplemente las dejamos intactas.
+
+  //     // 2️⃣ Subir nuevas imágenes
+  //     const cloudinaryFiles = await Promise.all(
+  //       uploadImages.map(async (uploadImage) => {
+  //         // Cambiar tipo a 'gallery' si ya existe una imagen 'primary' o 'secondary'
+  //         if (uploadImage.type === 'primary' && existingImages.some(img => img.type === 'primary')) {
+  //           uploadImage.type = 'gallery'; // Cambiar tipo a 'gallery' si ya existe 'primary'
+  //         }
+  //         if (uploadImage.type === 'secondary' && existingImages.some(img => img.type === 'secondary')) {
+  //           uploadImage.type = 'gallery'; // Cambiar tipo a 'gallery' si ya existe 'secondary'
+  //         }
+
+  //         const cloudinaryFile = await this.uploadFile(uploadImage.file);
+  //         return {
+  //           cloudinaryFile,
+  //           type: uploadImage.type,
+  //         };
+  //       }),
+  //     );
+
+  //     const producto = await this.productoService.findOne(productoId);
+
+  //     const imagenes = cloudinaryFiles.map(({ cloudinaryFile, type }) => {
+  //       const imagen = new Imagen();
+  //       imagen.url = cloudinaryFile.secure_url;
+  //       imagen.producto = producto;
+  //       imagen.type = type as ImageType;
+  //       imagen.publicId = cloudinaryFile.public_id;
+  //       return imagen;
+  //     });
+
+  //     // 3️⃣ Guardar nuevas imágenes sin eliminar las existentes
+  //     await repo.save(imagenes);
+
+  //     return imagenes;
+  //   });
+  // }
+
   async uploadFiles(uploadImages: UploadImageRequest[], productoId: number) {
     if (!uploadImages.length) {
       throw new BadRequestException('No se recibieron imágenes (images[])');
@@ -51,23 +104,25 @@ export class UploadImageService {
       const repo = manager.getRepository(Imagen);
 
       // 1️⃣ Traer imágenes actuales del producto
-      const existingImages = await repo.find({
-        where: { producto: { id: productoId } as any },
-      });
+      // const existingImages = await repo.find({
+      //   where: { producto: { id: productoId } as any },
+      // });
 
-      // No se eliminan las imágenes actuales, simplemente las dejamos intactas.
+      // // 2️⃣ Borrar en Cloudinary
+      // for (const img of existingImages) {
+      //   if (img.publicId) {
+      //     await cloudinary.uploader.destroy(img.publicId).catch(() => null);
+      //   }
+      // }
 
-      // 2️⃣ Subir nuevas imágenes
+      // // 3️⃣ Borrar en DB
+      // await repo.delete({
+      //   producto: { id: productoId } as any,
+      // });
+
+      // 4️⃣ Subir nuevas a Cloudinary
       const cloudinaryFiles = await Promise.all(
         uploadImages.map(async (uploadImage) => {
-          // Cambiar tipo a 'gallery' si ya existe una imagen 'primary' o 'secondary'
-          if (uploadImage.type === 'primary' && existingImages.some(img => img.type === 'primary')) {
-            uploadImage.type = 'gallery'; // Cambiar tipo a 'gallery' si ya existe 'primary'
-          }
-          if (uploadImage.type === 'secondary' && existingImages.some(img => img.type === 'secondary')) {
-            uploadImage.type = 'gallery'; // Cambiar tipo a 'gallery' si ya existe 'secondary'
-          }
-
           const cloudinaryFile = await this.uploadFile(uploadImage.file);
           return {
             cloudinaryFile,
@@ -87,14 +142,12 @@ export class UploadImageService {
         return imagen;
       });
 
-      // 3️⃣ Guardar nuevas imágenes sin eliminar las existentes
+      // 5️⃣ Guardar nuevas
       await repo.save(imagenes);
 
       return imagenes;
     });
   }
-
-
 
   // Método para obtener las imágenes de un producto
   async getImagesByProductId(productoId: number): Promise<Imagen[]> {
@@ -128,33 +181,42 @@ export class UploadImageService {
     }
 
     // 3) transacción para asegurar consistencia
-    return this.dataSource.transaction(async (manager) => {
-      const repo = manager.getRepository(Imagen);
+    const repo = this.imagenRepository;
 
-      // si setea primary/secondary, liberar el anterior
-      if (type === 'primary' || type === 'secondary') {
-        const current = await repo.findOne({
-          where: {
-            producto: { id: productoId } as any,
-            type: type as any,
-          },
-          relations: ['producto'],
-        });
-
-        if (current && current.id !== imageId) {
-          current.type = 'gallery';
-          await repo.save(current);
-        }
-      }
-
-      image.type = type;
-      await repo.save(image);
-
-      // opcional: devolver lista actualizada de imágenes del producto
-      return repo.find({
-        where: { producto: { id: productoId } as any },
-        order: { id: 'DESC' },
+    // Lógica para asegurar que solo haya 1 imagen de tipo 'primary' y 1 de tipo 'secondary'
+    if (type === 'primary' || type === 'secondary') {
+      const existingImage = await repo.findOne({
+        where: {
+          producto: { id: productoId } as any,
+          type: type as any,
+        },
+        relations: ['producto'],
       });
+
+      if (existingImage && existingImage.id !== imageId) {
+        existingImage.type = 'gallery';
+        await repo.save(existingImage); // Cambiar la imagen existente de primary o secondary a gallery
+      }
+    }
+
+    image.type = type;
+    await repo.save(image);
+
+    // Si la imagen eliminada era primary/secondary, reasignamos una imagen gallery a primary/secondary si es necesario
+    if (type === 'primary' || type === 'secondary') {
+      const galleryImage = await repo.findOne({
+        where: { producto: { id: productoId } as any, type: 'gallery' },
+      });
+
+      if (galleryImage) {
+        galleryImage.type = type === 'primary' ? 'primary' : 'secondary';
+        await repo.save(galleryImage);
+      }
+    }
+
+    return repo.find({
+      where: { producto: { id: productoId } as any },
+      order: { id: 'DESC' },
     });
   }
 
@@ -166,7 +228,6 @@ export class UploadImageService {
     });
 
     if (!img) throw new NotFoundException('Imagen no encontrada');
-
     if (img.producto?.id !== productoId) {
       throw new BadRequestException('La imagen no pertenece a este producto');
     }
