@@ -1,5 +1,4 @@
 'use server'
-
 type ImageType = 'primary' | 'secondary' | 'gallery'
 
 export async function deleteProductImage(productId: number, imageId: number) {

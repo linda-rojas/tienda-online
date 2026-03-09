@@ -2,7 +2,7 @@ import ProductsTable from "@/components/ui/products/ProductsTable";
 import AdminNav from "@/components/ui/admin/panelAdmin/AdminNav";
 import Heading from "@/components/ui/admin/panelAdmin/Heading";
 import Pagination from "@/components/ui/Pagination";
-import { ProductForm, ProductResponseSchema } from "@/schemas/schemas";
+import { ProductResponseSchema } from "@/schemas/schemas";
 import { isValidPage } from "@/utils/isValidPage";
 import Link from "next/link";
 import { redirect } from 'next/navigation';

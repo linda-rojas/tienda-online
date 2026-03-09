@@ -1,9 +1,8 @@
 import AdminNav from "@/components/ui/admin/panelAdmin/AdminNav";
 import Heading from "@/components/ui/admin/panelAdmin/Heading";
 import Link from "next/link";
-import ProductWizardWrapper from "@/components/forms/productsPanelAdmin/ProductWizardWrapper";
 import { CategoriesResponseSchemas } from "@/schemas/schemas";
-import ProductWizardCreateModal from "@/components/forms/productsPanelAdmin/ProductWizardCreateModal";
+import ProductForm from "@/components/forms/panelAdmin/ProductForm";
 
 async function getCategories() {
     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/categorias`
@@ -30,8 +29,7 @@ export default async function NewProductsPage() {
                             Volver
                         </Link>
                         <Heading>Nuevo producto</Heading>
-
-                        <ProductWizardCreateModal categories={categories} />
+                        <ProductForm />
                     </div>
                 </div>
             </div>

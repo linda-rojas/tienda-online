@@ -1,11 +1,11 @@
 'use client';
-import { Category, ProductForm } from "@/schemas/schemas"
+import { Category } from "@/schemas/schemas"
 import { formatCOP } from "@/utils/format-currency"
 import Image from "next/image"
 import Link from "next/link"
-import DeleteProductForm from "./CRUD/DeleteProductForm"
+import DeleteProductForm from "../../forms/panelAdmin/CRUD/DeleteProductForm"
 import { getImagePath } from "@/utils/get-image-path"
-// import { useState } from "react"
+import { ProductForm } from "@/schemas/schemas";
 
 export default function ProductsTable({ products, categories }: { products: ProductForm[], categories: Category[] }) {
 

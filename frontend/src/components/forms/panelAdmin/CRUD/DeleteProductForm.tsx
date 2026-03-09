@@ -4,7 +4,7 @@ import { deleteProductAction } from '@/components/actions/delete-product-action'
 import { Product } from '@/schemas/schemas'
 import { useState, useTransition } from 'react'
 import { toast } from 'react-toastify'
-import ConfirmModal from '../../dialog/ConfirmModal'
+import ConfirmModal from '../../../ui/dialog/ConfirmModal'
 
 
 export default function DeleteProductForm({ productId }: { productId: Product['id'] }) {

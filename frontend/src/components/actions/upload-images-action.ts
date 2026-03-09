@@ -9,6 +9,9 @@ export async function uploadImage(productId: number,
 
     const formData = new FormData();
 
+    console.log('images', JSON.stringify(images));
+
+
     images.forEach((img, i) => {
         formData.append(`images[${i}][file]`, img.file);
         formData.append(`images[${i}][type]`, img.type);

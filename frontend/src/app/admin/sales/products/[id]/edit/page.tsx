@@ -1,10 +1,9 @@
-import EditProductForm from "@/components/ui/products/CRUD/EditProductForm";
-import ProductForm from "@/components/ui/products/ProductForm";
 import AdminNav from "@/components/ui/admin/panelAdmin/AdminNav";
 import Heading from "@/components/ui/admin/panelAdmin/Heading";
 import { ProductSchema } from "@/schemas/schemas";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ProductForm from "@/components/forms/panelAdmin/ProductForm";
 
 async function getProduct(id: string) {
     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/productos/${id}`
@@ -39,12 +38,7 @@ export default async function EditProductPage({ params }: { params: Params }) {
                         </Link>
 
                         <Heading>Editar Producto: {product.nombre}</Heading>
-
-                        <EditProductForm>
-                            <ProductForm
-                                product={product}
-                            />
-                        </EditProductForm>
+                        <ProductForm product={product} />
                     </div>
                 </div>
             </div>
