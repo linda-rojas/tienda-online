@@ -13,7 +13,7 @@ export default function AdminNav() {
     };
 
     return (
-        <header className="px-10 py-5 color-blue-footer-bg flex justify-between a">
+        <header className="fixed top-0 left-0 w-full z-10 px-10 py-5 color-blue-footer-bg flex justify-between a">
             <div className="flex gap-5 text-white items-center">
                 <h1 className="text-center font-bold text-[16px] sm:text-[17px] lg:text-lg tracking-wide">Panel de Administración</h1>
             </div>
