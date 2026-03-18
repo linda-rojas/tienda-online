@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { loginUser } from '@/services/loginUser/loginUser';
 import { validateEmail, validatePassword } from '@/services/loginUser/validation';
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import Spinner from '../dialog/Spinner';
 
 // Toast con nombre en semibold
 const welcomeToast = (name: string) => (
@@ -27,6 +28,7 @@ const LoginForm = () => {
   const [passwordError, setPasswordError] = useState('');
   const [userData, setUserData] = useState<any>(null);
   const [isClient, setIsClient] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -100,6 +102,8 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
     setEmailError('');
     setPasswordError('');
     setUserData(null);
@@ -113,6 +117,8 @@ const LoginForm = () => {
       return;
     }
 
+    setIsSubmitting(true);
+
     const { success, data, error } = await loginUser(email, password);
 
     if (!success) {
@@ -122,6 +128,7 @@ const LoginForm = () => {
       if (msg.includes('correo') && msg.includes('no encontrado')) {
         setEmailError('El correo electrónico no está registrado.');
         toast.error('El correo electrónico no está registrado.');
+        setIsSubmitting(false);
         return;
       }
 
@@ -129,11 +136,13 @@ const LoginForm = () => {
       if (msg.includes('contraseña') && msg.includes('incorrecta')) {
         setPasswordError('La contraseña es incorrecta.');
         toast.error('La contraseña es incorrecta.');
+        setIsSubmitting(false);
         return;
       }
 
       // ✅ Otro error
       toast.error(error || 'Hubo un error en el proceso de inicio de sesión.');
+      setIsSubmitting(false);
       return;
     }
 
@@ -179,119 +188,127 @@ const LoginForm = () => {
   }
 
   return (
-    <div className="flex justify-center p-4 items-center m-6 bg-gray-100">
-      <div className="w-full max-w-lg p-4 sm:p-8 lg:p-8 bg-white shadow-xl rounded-lg">
-        <h2 className="text-[20px] sm:text-2xl lg:text-3xl font-bold text-center mb-6 text-gray-600">
-          Iniciar sesión
-        </h2>
+    <>
+      {isSubmitting && (
+        <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/20 backdrop-blur-[2px]">
+          <Spinner />
+        </div>
+      )}
+      <div className="flex justify-center p-4 items-center m-6 bg-gray-100">
+        <div className="w-full max-w-lg p-4 sm:p-8 lg:p-8 bg-white shadow-xl rounded-lg">
+          <h2 className="text-[20px] sm:text-2xl lg:text-3xl font-bold text-center mb-6 text-gray-600">
+            Iniciar sesión
+          </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-2 lg:space-y-6">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-[14px] sm:text-[17px] font-semibold text-gray-500"
-            >
-              Correo electrónico
-            </label>
-            <input
-              type="email"
-              id="email"
-              autoComplete='email'
-              className={`w-full p-2 border text-gray-500 ${emailError ? 'border-red-500' : 'border-gray-300'
-                } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none`}
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (emailError) setEmailError('');
-              }}
-
-              required
-            />
-            {emailError && (
-              <div className="text-red-500 text-sm mt-1">{emailError}</div>
-            )}
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-[14px] sm:text-[17px] font-semibold text-gray-500"
-            >
-              Contraseña
-            </label>
-            <div className="relative">
+          <form onSubmit={handleSubmit} className="space-y-2 lg:space-y-6">
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-[14px] sm:text-[17px] font-semibold text-gray-500"
+              >
+                Correo electrónico
+              </label>
               <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                autoComplete="current-password"
-                className={`w-full p-2 pr-12 border text-gray-500 ${passwordError ? "border-red-500" : "border-gray-300"
+                type="email"
+                id="email"
+                autoComplete='email'
+                className={`w-full p-2 border text-gray-500 ${emailError ? 'border-red-500' : 'border-gray-300'
                   } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none`}
-                value={password}
+                value={email}
                 onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (passwordError) setPasswordError('');
+                  setEmail(e.target.value);
+                  if (emailError) setEmailError('');
                 }}
 
                 required
               />
+              {emailError && (
+                <div className="text-red-500 text-sm mt-1">{emailError}</div>
+              )}
+            </div>
 
-              {/* 👁 Icono dentro del input */}
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-[14px] sm:text-[17px] font-semibold text-gray-500"
+              >
+                Contraseña
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  autoComplete="current-password"
+                  className={`w-full p-2 pr-12 border text-gray-500 ${passwordError ? "border-red-500" : "border-gray-300"
+                    } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (passwordError) setPasswordError('');
+                  }}
+
+                  required
+                />
+
+                {/* 👁 Icono dentro del input */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition bg-transparent border-0 outline-none focus:outline-none"
+                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                >
+                  {showPassword ? (
+                    <AiOutlineEye className="text-xl" />
+                  ) : (
+                    <AiOutlineEyeInvisible className="text-xl" />
+                  )}
+                </button>
+              </div>
+
+              {passwordError && (
+                <div className="text-red-500 text-sm mt-1">{passwordError}</div>
+              )}
+            </div>
+
+            <div className="w-full flex items-center justify-around mt-6 lg:mt-0">
               <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition bg-transparent border-0 outline-none focus:outline-none"
-                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                type="submit"
+                disabled={isSubmitting}
+                className="w-[70px] sm:w-[150px] lg:w-[200px] bg-gradient-to-r from-[#3399f2] to-indigo-600 text-white font-semibold py-2 rounded-lg shadow-md hover:scale-105 transform transition-all duration-300 cursor-pointer text-[15px] sm:text-[18px] lg:text-[18px]"
               >
-                {showPassword ? (
-                  <AiOutlineEye className="text-xl" />
-                ) : (
-                  <AiOutlineEyeInvisible className="text-xl" />
-                )}
+                Entrar
               </button>
+              <div className="text-center">
+                <Link
+                  href="/"
+                  className="inline-block bg-white text-red-700 font-semibold py-1 sm:py-2 lg:py-2 px-2 sm:px-4 lg:px-4 rounded-full shadow-lg border-2 text-[13px] sm:text-[17px] lg:text-[17px] border-red-700 hover:bg-red-700 hover:text-white transition-all duration-300 transform hover:scale-105"
+                >
+                  Volver a la tienda
+                </Link>
+              </div>
             </div>
+          </form>
 
-            {passwordError && (
-              <div className="text-red-500 text-sm mt-1">{passwordError}</div>
-            )}
-          </div>
-
-          <div className="w-full flex items-center justify-around mt-6 lg:mt-0">
-            <button
-              type="submit"
-              className="w-[70px] sm:w-[150px] lg:w-[200px] bg-gradient-to-r from-[#3399f2] to-indigo-600 text-white font-semibold py-2 rounded-lg shadow-md hover:scale-105 transform transition-all duration-300 cursor-pointer text-[15px] sm:text-[18px] lg:text-[18px]"
+          <div className="mt-6 text-center">
+            <Link
+              href="/admin/register"
+              className="text-gray-500 hover:text-gray-600 text-[14px] sm:text-[16px] font-semibold"
             >
-              Entrar
-            </button>
-            <div className="text-center">
-              <Link
-                href="/"
-                className="inline-block bg-white text-red-700 font-semibold py-1 sm:py-2 lg:py-2 px-2 sm:px-4 lg:px-4 rounded-full shadow-lg border-2 text-[13px] sm:text-[17px] lg:text-[17px] border-red-700 hover:bg-red-700 hover:text-white transition-all duration-300 transform hover:scale-105"
-              >
-                Volver a la tienda
-              </Link>
-            </div>
+              ¿Aún no estás registrado? Regístrate
+            </Link>
           </div>
-        </form>
 
-        <div className="mt-6 text-center">
-          <Link
-            href="/admin/register"
-            className="text-gray-500 hover:text-gray-600 text-[14px] sm:text-[16px] font-semibold"
-          >
-            ¿Aún no estás registrado? Regístrate
-          </Link>
-        </div>
-
-        <div className="mt-2 text-center">
-          <Link
-            href="/auth/forgot-password"
-            className="text-gray-500 hover:text-gray-600 text-[14px] sm:text-[16px] font-semibold"
-          >
-            ¿Olvidaste tu contraseña?
-          </Link>
+          <div className="mt-2 text-center">
+            <Link
+              href="/auth/forgot-password"
+              className="text-gray-500 hover:text-gray-600 text-[14px] sm:text-[16px] font-semibold"
+            >
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

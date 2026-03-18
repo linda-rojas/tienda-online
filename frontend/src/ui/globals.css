@@ -46,6 +46,55 @@
     }
 }
 
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Spinner contenedor */
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #b21b13;
+    /* Fondo rojo del spinner */
+    padding: 14px;
+    /* Espaciado interno */
+    border-radius: 50%;
+    /* Bordes redondeados */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    /* Sombra suave */
+    animation: spin 2s linear infinite;
+    /* Animación de rotación */
+}
+
+/* Texto "AC" */
+.spinner-text {
+    font-size: 25px;
+    font-weight: 800;
+    color: #f8c48d;
+    /* Color dorado */
+}
+
+/* Ícono circular "O" */
+.spinner-icon {
+    /* Fondo blanco */
+    padding: 4px;
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+    /* Rotación infinita */
+}
+
+.spinner-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
 .skeleton {
     position: relative;
     overflow: hidden;

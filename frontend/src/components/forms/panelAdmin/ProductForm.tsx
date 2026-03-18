@@ -9,6 +9,7 @@ import { uploadImage } from "@/components/actions/upload-images-action"
 import SaveButton from "./CRUD/EditProductForm"
 import ImageTypeSelect from "../../ui/products/image/ImageTypeSelect.tsx"
 import { toast } from "react-toastify"
+import ConfirmAceptDialog from "@/components/ui/dialog/ConfirmAceptDialog"
 
 type ImageType = 'primary' | 'secondary' | 'gallery'
 
@@ -42,6 +43,8 @@ export default function ProductForm({
         categoriaId: product?.categoriaId ?? '',
     });
     const [images, setImages] = useState<ProductImage[]>(product?.imagenes ?? []);
+    const [confirmOpen, setConfirmOpen] = useState(false);  // Estado para controlar si el modal está abierto
+    const [loadingSave, setLoadingSave] = useState(false);  // Estado para manejar el estado de carga (loading)
 
     const blockPrimary = false;
     const blockSecondary = false;
@@ -309,7 +312,19 @@ export default function ProductForm({
     //     }
     // }, [values, images, product?.id, saveImages, router]);
 
+    const handleOpenConfirm = useCallback(() => {
+        if (!validateImages()) {
+            return;
+        }
+
+        setConfirmOpen(true);  // Abre el diálogo de confirmación
+    }, [images]);  // Dependencia para que se reevalúe cuando las imágenes cambien
+
     const handleSave = useCallback(async () => {
+        if (loadingSave) {
+            return;  // Evita que se pueda hacer otro clic mientras se guarda
+        }
+
         if (!validateImages()) {
             return;
         }
@@ -321,22 +336,23 @@ export default function ProductForm({
 
         productData.categoriaId = +(productData.categoriaId);
 
-        console.log("Guardando producto:", productData);
-
         try {
+            setLoadingSave(true);
+
             const responseData = await saveProduct(productData);
-            console.log('Producto guardado exitosamente:', responseData);
 
             await updateExistingImageTypes(responseData.id);
             await saveImages(responseData.id);
 
-            alert('Producto guardado con éxito!');
+            setConfirmOpen(false);  // Cierra el modal después de guardar
             router.push('/admin/sales/products');
         } catch (error) {
-            console.error('Error al guardar el producto:', error);
             alert('Hubo un error al guardar el producto.');
+            setConfirmOpen(false);  // También cierra el modal si ocurre un error
+        } finally {
+            setLoadingSave(false);  // Desactiva el loading
         }
-    }, [values, images, saveProduct, updateExistingImageTypes, saveImages, router]);
+    }, [values, images, saveProduct, updateExistingImageTypes, saveImages, router, loadingSave]);
 
     const handleTypeChange = (index: number, newType: ImageType) => {
         const updatedImages = images.map((img, i) => {
@@ -482,7 +498,20 @@ export default function ProductForm({
                 }}
             />
             {/* Botón de guardar */}
-            <SaveButton onSave={handleSave} />
+            <SaveButton onSave={handleOpenConfirm} />
+
+            <ConfirmAceptDialog
+                open={confirmOpen}  // Controla si el modal está abierto o cerrado
+                title={product?.id ? 'Confirmar actualización' : 'Confirmar creación'}
+                message={
+                    product?.id
+                        ? 'Se guardarán los cambios realizados en este producto.'
+                        : 'Se guardará este nuevo producto.'
+                }
+                confirmText={product?.id ? 'Guardar cambios' : 'Guardar producto'}
+                loading={loadingSave}  // Muestra el estado de carga
+                onConfirm={handleSave}  // Llama a handleSave cuando se confirma
+            />
         </>
     )
 }

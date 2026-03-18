@@ -84,8 +84,8 @@ export default function ProfileSection({
                                 onChange={(e) => setProfileForm((p) => ({ ...p, nombre: e.target.value }))}
                                 onBlur={() => setProfileTouched((t) => ({ ...t, nombre: true }))}
                                 className={`mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 ${profileTouched.nombre && profileErrors.nombre
-                                        ? 'border-red-300 focus:ring-red-200'
-                                        : 'border-gray-300 focus:ring-blue-200'
+                                    ? 'border-red-300 focus:ring-red-200'
+                                    : 'border-gray-300 focus:ring-blue-200'
                                     }`}
                             />
                             {profileTouched.nombre && profileErrors.nombre && (
@@ -108,8 +108,8 @@ export default function ProfileSection({
                                 onChange={(e) => setProfileForm((p) => ({ ...p, apellidos: e.target.value }))}
                                 onBlur={() => setProfileTouched((t) => ({ ...t, apellidos: true }))}
                                 className={`mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 ${profileTouched.apellidos && profileErrors.apellidos
-                                        ? 'border-red-300 focus:ring-red-200'
-                                        : 'border-gray-300 focus:ring-blue-200'
+                                    ? 'border-red-300 focus:ring-red-200'
+                                    : 'border-gray-300 focus:ring-blue-200'
                                     }`}
                             />
                             {profileTouched.apellidos && profileErrors.apellidos && (
@@ -132,14 +132,14 @@ export default function ProfileSection({
                                 onChange={(e) => setProfileForm((p) => ({ ...p, correo: e.target.value }))}
                                 onBlur={() => setProfileTouched((t) => ({ ...t, correo: true }))}
                                 className={`mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 ${profileTouched.correo && profileErrors.correo
-                                        ? 'border-red-300 focus:ring-red-200'
-                                        : 'border-gray-300 focus:ring-blue-200'
+                                    ? 'border-red-300 focus:ring-red-200'
+                                    : 'border-gray-300 focus:ring-blue-200'
                                     }`}
                             />
                             {profileTouched.correo && profileErrors.correo && (
                                 <p className="mt-1 text-xs text-red-600">{profileErrors.correo}</p>
                             )}
-                            <p className="mt-1 text-xs text-gray-500">Si el correo ya existe, el backend lo va a rechazar.</p>
+                            <p className="mt-1 text-xs text-gray-500">Si el correo ya existe, no será permitido.</p>
                         </>
                     )}
                 </div>
@@ -162,8 +162,8 @@ export default function ProfileSection({
                                 inputMode="numeric"
                                 maxLength={10}
                                 className={`mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 ${profileTouched.celular && profileErrors.celular
-                                        ? 'border-red-300 focus:ring-red-200'
-                                        : 'border-gray-300 focus:ring-blue-200'
+                                    ? 'border-red-300 focus:ring-red-200'
+                                    : 'border-gray-300 focus:ring-blue-200'
                                     }`}
                             />
                             {profileTouched.celular && profileErrors.celular && (
